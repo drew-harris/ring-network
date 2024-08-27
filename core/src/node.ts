@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mutation, query } from "./utils";
+import { mutation } from "./utils";
 export module Node {
   export const Info = z.object({
     nodeId: z.string(),
