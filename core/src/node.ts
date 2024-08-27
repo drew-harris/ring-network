@@ -13,17 +13,19 @@ export module Node {
   export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
 
   // Mutations
-  export const createNode = mutation(
-    z.object({
-      nodeId: z.string(),
-    }),
-    (tx, input) => {
-      tx.set(input.nodeId, {
-        leftNeighbor: "liw",
-        nodeId: createId(),
-        rightNeighbor: "8023",
-        status: "inactive",
-      } satisfies Info);
-    },
-  );
+  export const mutations = {
+    create: mutation(
+      z.object({
+        nodeId: z.string(),
+      }),
+      (tx, input) => {
+        tx.set(input.nodeId, {
+          leftNeighbor: "liw",
+          nodeId: createId(),
+          rightNeighbor: "8023",
+          status: "inactive",
+        } satisfies Info);
+      },
+    ),
+  };
 }
