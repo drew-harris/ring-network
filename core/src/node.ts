@@ -12,18 +12,22 @@ export module Node {
 
   export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
 
-  export const mutations = new Mutations().register(
-    "create",
-    z.object({
-      nodeId: z.string(),
-    }),
-    (tx, input) => {
-      tx.set(input.nodeId, {
-        leftNeighbor: "liw",
-        nodeId: createId(),
-        rightNeighbor: "8023",
-        status: "inactive",
-      } satisfies Info);
-    },
-  );
+  export const mutations = new Mutations()
+    .register(
+      "createNode",
+      z.object({
+        nodeId: z.string(),
+      }),
+      (tx, input) => {
+        tx.set(input.nodeId, {
+          leftNeighbor: "liw",
+          nodeId: createId(),
+          rightNeighbor: "8023",
+          status: "inactive",
+        } satisfies Info);
+      },
+    )
+    .register("deleteNode", z.string(), async (tx, input) => {
+      tx.del(input);
+    });
 }
