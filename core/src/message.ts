@@ -29,7 +29,7 @@ export module Message {
         return tx.set(input.messageId, input);
       },
     )
-    .register("blank", z.object({}), (tx, input) => {
+    .register("blank", z.null(), (tx, input) => {
       return "good work drew";
     });
 }
