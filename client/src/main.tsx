@@ -5,12 +5,11 @@ import "./index.css";
 import { Replicache } from "replicache";
 import { nanoid } from "nanoid";
 import { Node } from "core/node";
+import { Mutations } from "core/utils";
 
 const rep = new Replicache({
   licenseKey: import.meta.env.VITE_PUBLIC_REPLICACHE_LICENSE_KEY as string,
-  mutators: {
-    createNode: Node.createNode,
-  },
+  mutators: new Mutations().extend(Node.mutations).build(),
   name: nanoid(5),
 });
 
