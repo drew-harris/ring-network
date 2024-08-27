@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { mutation, query } from "./utils";
 export module Node {
   export const Info = z.object({
     nodeId: z.string(),
@@ -10,4 +11,19 @@ export module Node {
   export type Info = z.infer<typeof Info>;
 
   export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
+
+  // Mutations
+  export const createNode = mutation(
+    z.object({
+      nodeId: z.string(),
+    }),
+    (tx, input) => {
+      tx.set(input.nodeId, {
+        leftNeighbor: "liw",
+        nodeId: createId(),
+        rightNeighbor: "8023",
+        status: "inactive",
+      } satisfies Info);
+    },
+  );
 }
