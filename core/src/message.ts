@@ -16,16 +16,20 @@ export module Message {
 
   export type Info = z.infer<typeof Info>;
 
-  export const mutations = new Mutations().register(
-    "sendMessage",
-    z.object({
-      messageId: z.string(),
-      senderId: z.string(),
-      reciverId: z.string(),
-      message: z.string(),
-    }),
-    (tx, input) => {
-      return tx.set(input.messageId, input);
-    },
-  );
+  export const mutations = new Mutations()
+    .register(
+      "sendMessage",
+      z.object({
+        messageId: z.string(),
+        senderId: z.string(),
+        reciverId: z.string(),
+        message: z.string(),
+      }),
+      (tx, input) => {
+        return tx.set(input.messageId, input);
+      },
+    )
+    .register("blank", z.object({}), (tx, input) => {
+      return "good work drew";
+    });
 }

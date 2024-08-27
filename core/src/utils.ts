@@ -30,7 +30,7 @@ export const mutation = <
   cb: Callback,
 ) => {
   const result = function (tx: WriteTransaction, input: z.input<typeof arg1>) {
-    const parsed = input.parse(input);
+    const parsed = arg1.parse(input);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return cb.apply(cb, [tx, parsed]);
   };

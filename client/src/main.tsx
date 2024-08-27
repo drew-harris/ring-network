@@ -17,6 +17,9 @@ const rep = new Replicache({
   name: nanoid(5),
 });
 
+const result = await rep.mutate.blank({});
+console.log(result);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
