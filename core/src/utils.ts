@@ -64,7 +64,7 @@ export const query = <
 export class Mutations<Mutators> {
   private mutations = new Map<string, Mutator<any, any>>();
 
-  public expose<
+  public register<
     Name extends string,
     Arg1 extends ZodSchema,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

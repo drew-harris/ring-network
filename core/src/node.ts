@@ -12,7 +12,7 @@ export module Node {
 
   export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
 
-  export const mutations = new Mutations().expose(
+  export const mutations = new Mutations().register(
     "create",
     z.object({
       nodeId: z.string(),
