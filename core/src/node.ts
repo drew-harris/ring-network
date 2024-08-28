@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Mutations } from "./utils";
+import { InferCallback, Mutations } from "./utils";
 export module Node {
   export const Info = z.object({
     nodeId: z.string(),

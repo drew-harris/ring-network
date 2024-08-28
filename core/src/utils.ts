@@ -19,6 +19,11 @@ type Mutator<
   Callback extends (tx: WriteTransaction, arg1: z.output<Arg1>) => any,
 > = (tx: WriteTransaction, arg1: z.input<Arg1>) => ReturnType<Callback>;
 
+export type InferCallback<M extends Mutator<any, any>> =
+  M extends Mutator<any, infer T>
+    ? (input: Parameters<T>[1]) => ReturnType<T>
+    : never;
+
 export const mutation = <
   Arg1 extends ZodSchema,
   Callback extends (tx: WriteTransaction, arg1: z.output<Arg1>) => any,
