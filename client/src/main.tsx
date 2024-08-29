@@ -9,8 +9,7 @@ import "./index.css";
 
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-
-const router = createRouter({ routeTree });
+import React from "react";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -25,10 +24,24 @@ const rep = new Replicache({
     .extend(Message.mutations)
     .build(),
   name: nanoid(5),
+  pullURL: "http://localhost:3000/pull",
 });
+
+export type RealtimeClient = typeof rep;
+
+const router = createRouter({
+  routeTree,
+  context: {
+    replicache: rep,
+  },
+});
+
+export const RealtimeClientContext = React.createContext<RealtimeClient>(rep);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <RealtimeClientContext.Provider value={rep}>
+      <RouterProvider context={{ replicache: rep }} router={router} />
+    </RealtimeClientContext.Provider>
   </StrictMode>,
 );
