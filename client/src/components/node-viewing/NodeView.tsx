@@ -3,6 +3,7 @@ import { useContainerDimensions } from "@/lib/containerSize";
 import { RealtimeClientContext } from "@/main";
 import { Node } from "core/node";
 import { motion } from "framer-motion";
+import { nanoid } from "nanoid";
 import { useContext, useMemo, useRef, useState } from "react";
 
 interface NodeViewProps {
@@ -29,6 +30,10 @@ export const NodeView = (props: NodeViewProps) => {
     r.mutate.deleteNode(randomNodeId);
   };
 
+  const createNode = () => {
+    r.mutate.createNode({ nodeId: nanoid(4) });
+  };
+
   return (
     <div className="min-h-screen" ref={componentRef}>
       <div className="absolute">
@@ -43,6 +48,9 @@ export const NodeView = (props: NodeViewProps) => {
         />
         <Button className="block" variant="outline" onClick={deleteRandomNode}>
           Delete Random Node
+        </Button>
+        <Button className="block" variant="outline" onClick={createNode}>
+          Create Node
         </Button>
       </div>
       {props.nodes.map(
@@ -65,7 +73,13 @@ export const NodeView = (props: NodeViewProps) => {
                 ),
               }}
             >
-              <div className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center">
+              <div
+                onClick={() => {
+                  console.log("clicked", node.nodeId);
+                  r.mutate.deleteNode(node.nodeId);
+                }}
+                className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center"
+              >
                 <div>{node.nodeId}</div>
               </div>
             </motion.div>

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { InferCallback, Mutations } from "./utils";
+import { Mutations } from "./utils";
 import { ReadTransaction } from "replicache";
 export module Node {
   export const Info = z.object({
@@ -19,10 +19,11 @@ export module Node {
       z.object({
         nodeId: z.string(),
       }),
-      (tx, input) => {
-        tx.set(input.nodeId, {
+      async (tx, input) => {
+        console.log("creating node", input);
+        await tx.set(`nodes/${input.nodeId}`, {
           leftNeighbor: "liw",
-          nodeId: createId(),
+          nodeId: input.nodeId,
           rightNeighbor: "8023",
           status: "inactive",
         } satisfies Info);
