@@ -6,19 +6,17 @@ import { useSubscribe } from "replicache-react";
 
 export const Route = createFileRoute("/simulator")({
   component: SimulatorPage,
+  async loader({ context }) {
+    return await context.replicache.query(Node.queries.getAllNodes);
+  },
 });
 
 function SimulatorPage() {
   const r = useContext(RealtimeClientContext);
-  const data = useSubscribe(r, async (tx) => {
-    return await tx
-      .scan<Node.Info>({
-        prefix: "nodes",
-      })
-      .values()
-      .toArray();
+  const loadedData = Route.useLoaderData();
+  const data = useSubscribe(r, Node.queries.getAllNodes, {
+    default: loadedData,
   });
-
   return (
     <div>
       <div>length: {data?.length}</div>

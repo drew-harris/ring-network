@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { InferCallback, Mutations } from "./utils";
+import { ReadTransaction } from "replicache";
 export module Node {
   export const Info = z.object({
     nodeId: z.string(),
@@ -102,5 +103,16 @@ export module Node {
       key: `nodes/${node.nodeId}`,
       value: node,
     };
+  };
+
+  export const queries = {
+    getAllNodes: async (tx: ReadTransaction) => {
+      return await tx
+        .scan<Node.Info>({
+          prefix: "nodes",
+        })
+        .values()
+        .toArray();
+    },
   };
 }
