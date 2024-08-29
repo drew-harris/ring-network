@@ -29,7 +29,8 @@ export module Node {
       },
     )
     .register("deleteNode", z.string(), async (tx, input) => {
-      tx.del(input);
+      console.log("deleting node", input);
+      await tx.del(`nodes/${input}`);
     });
 
   export const getInitialState = () => {

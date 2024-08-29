@@ -33,8 +33,8 @@ export const mutation = <
   cb: Callback,
 ) => {
   const result = function (tx: WriteTransaction, input: z.input<typeof arg1>) {
-    const parsed = arg1.parse(input);
-    return cb.apply(cb, [tx, parsed]);
+    // const parsed = arg1.parse(input);
+    return cb.apply(cb, [tx, input]);
   };
 
   return result as Mutator<Arg1, Callback>;
