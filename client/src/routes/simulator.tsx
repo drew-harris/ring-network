@@ -1,3 +1,4 @@
+import { NodeView } from "@/components/node-viewing/NodeView";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Node } from "core/node";
@@ -19,16 +20,7 @@ function SimulatorPage() {
   });
   return (
     <div>
-      <div>length: {data?.length}</div>
-      <div>
-        {data?.map((node) => (
-          <div className="flex gap-2" key={node.nodeId}>
-            <div>{node.leftNeighbor}</div>
-            <div>{node.nodeId}</div>
-            <div>{node.rightNeighbor}</div>
-          </div>
-        ))}
-      </div>
+      <NodeView nodes={data} />
     </div>
   );
 }
