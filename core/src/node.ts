@@ -107,12 +107,30 @@ export module Node {
 
   export const queries = {
     getAllNodes: async (tx: ReadTransaction) => {
-      return await tx
+      const nodes = await tx
         .scan<Node.Info>({
           prefix: "nodes",
         })
         .values()
         .toArray();
+
+      // Order nodes by leftNeighbor
+      const orderedNodes = nodes.sort((a, b) => {
+        const numberPartOfIdA = parseInt(a.nodeId.split("-")[1]);
+        const numberPartOfIdB = parseInt(b.nodeId.split("-")[1]);
+
+        if (numberPartOfIdA < numberPartOfIdB) {
+          return -1;
+        }
+
+        if (numberPartOfIdA > numberPartOfIdB) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return orderedNodes;
     },
   };
 }

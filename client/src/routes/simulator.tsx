@@ -21,7 +21,13 @@ function SimulatorPage() {
     <div>
       <div>length: {data?.length}</div>
       <div>
-        {data?.map((node) => <div key={node.nodeId}>{node.nodeId}</div>)}
+        {data?.map((node) => (
+          <div className="flex gap-2" key={node.nodeId}>
+            <div>{node.leftNeighbor}</div>
+            <div>{node.nodeId}</div>
+            <div>{node.rightNeighbor}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
