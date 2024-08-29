@@ -11,10 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
+import { Route as SimulatorIndexImport } from './routes/simulator/index'
 
 // Create/Update Routes
+
+const RegisterRoute = RegisterImport.update({
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   path: '/login',
@@ -23,6 +30,11 @@ const LoginRoute = LoginImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SimulatorIndexRoute = SimulatorIndexImport.update({
+  path: '/simulator/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -44,12 +56,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterImport
+      parentRoute: typeof rootRoute
+    }
+    '/simulator/': {
+      id: '/simulator/'
+      path: '/simulator'
+      fullPath: '/simulator'
+      preLoaderRoute: typeof SimulatorIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute, LoginRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexRoute,
+  LoginRoute,
+  RegisterRoute,
+  SimulatorIndexRoute,
+})
 
 /* prettier-ignore-end */
 
@@ -60,7 +91,9 @@ export const routeTree = rootRoute.addChildren({ IndexRoute, LoginRoute })
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/login"
+        "/login",
+        "/register",
+        "/simulator/"
       ]
     },
     "/": {
@@ -68,6 +101,12 @@ export const routeTree = rootRoute.addChildren({ IndexRoute, LoginRoute })
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/register": {
+      "filePath": "register.tsx"
+    },
+    "/simulator/": {
+      "filePath": "simulator/index.tsx"
     }
   }
 }
