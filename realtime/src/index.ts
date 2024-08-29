@@ -1,4 +1,5 @@
 import { serve } from "@hono/node-server";
+import { Node } from "core/node";
 import { Hono } from "hono";
 
 const app = new Hono();
@@ -13,24 +14,7 @@ app.post("/pull", async (c) => {
     cookie: 42,
     patch: [
       { op: "clear" },
-      {
-        op: "put",
-        key: "message/qpdgkvpb9ao",
-        value: {
-          from: "Jane",
-          content: "Hey, what's for lunch?",
-          order: 1,
-        },
-      },
-      {
-        op: "put",
-        key: "message/5ahljadc408",
-        value: {
-          from: "Fred",
-          content: "tacos?",
-          order: 2,
-        },
-      },
+      ...Node.getInitialState().map((n) => Node.transformNodeToOpt(n)),
     ],
   });
 });
