@@ -27,9 +27,6 @@ const rep = new Replicache({
   name: nanoid(5),
 });
 
-const result = await rep.mutate.blank(null);
-console.log(result);
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />

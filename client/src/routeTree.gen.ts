@@ -11,12 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SimulatorImport } from './routes/simulator'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as SimulatorIndexImport } from './routes/simulator/index'
+import { Route as SimulatorLayoutImport } from './routes/simulator/_layout'
 
 // Create/Update Routes
+
+const SimulatorRoute = SimulatorImport.update({
+  path: '/simulator',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const RegisterRoute = RegisterImport.update({
   path: '/register',
@@ -34,8 +41,13 @@ const IndexRoute = IndexImport.update({
 } as any)
 
 const SimulatorIndexRoute = SimulatorIndexImport.update({
-  path: '/simulator/',
-  getParentRoute: () => rootRoute,
+  path: '/',
+  getParentRoute: () => SimulatorRoute,
+} as any)
+
+const SimulatorLayoutRoute = SimulatorLayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => SimulatorRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -63,12 +75,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
-    '/simulator/': {
-      id: '/simulator/'
+    '/simulator': {
+      id: '/simulator'
       path: '/simulator'
       fullPath: '/simulator'
-      preLoaderRoute: typeof SimulatorIndexImport
+      preLoaderRoute: typeof SimulatorImport
       parentRoute: typeof rootRoute
+    }
+    '/simulator/_layout': {
+      id: '/simulator/_layout'
+      path: ''
+      fullPath: '/simulator'
+      preLoaderRoute: typeof SimulatorLayoutImport
+      parentRoute: typeof SimulatorImport
+    }
+    '/simulator/': {
+      id: '/simulator/'
+      path: '/'
+      fullPath: '/simulator/'
+      preLoaderRoute: typeof SimulatorIndexImport
+      parentRoute: typeof SimulatorImport
     }
   }
 }
@@ -79,7 +105,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   LoginRoute,
   RegisterRoute,
-  SimulatorIndexRoute,
+  SimulatorRoute: SimulatorRoute.addChildren({ SimulatorIndexRoute }),
 })
 
 /* prettier-ignore-end */
@@ -93,7 +119,7 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/login",
         "/register",
-        "/simulator/"
+        "/simulator"
       ]
     },
     "/": {
@@ -105,8 +131,20 @@ export const routeTree = rootRoute.addChildren({
     "/register": {
       "filePath": "register.tsx"
     },
+    "/simulator": {
+      "filePath": "simulator.tsx",
+      "children": [
+        "/simulator/_layout",
+        "/simulator/"
+      ]
+    },
+    "/simulator/_layout": {
+      "filePath": "simulator/_layout.tsx",
+      "parent": "/simulator"
+    },
     "/simulator/": {
-      "filePath": "simulator/index.tsx"
+      "filePath": "simulator/index.tsx",
+      "parent": "/simulator"
     }
   }
 }
