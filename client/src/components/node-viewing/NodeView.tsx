@@ -5,6 +5,7 @@ import { Node } from "core/node";
 import { motion } from "framer-motion";
 import { nanoid } from "nanoid";
 import { useContext, useMemo, useRef, useState } from "react";
+import { NodeItem } from "./NodeItem";
 
 // New component for drawing lines
 const NodeLines = ({
@@ -119,44 +120,16 @@ export const NodeView = (props: NodeViewProps) => {
           {props.nodes.map(
             (node, index) =>
               node.nodeId && (
-                <motion.div
+                <NodeItem
                   key={node.nodeId}
-                  className="absolute"
-                  initial={{
-                    x: Math.round(
-                      width / 2 +
-                        radius *
-                          Math.cos((index * Math.PI * 2) / props.nodes.length)
-                    ),
-                    y: Math.round(
-                      height / 2 +
-                        radius *
-                          Math.sin((index * Math.PI * 2) / props.nodes.length)
-                    ),
-                  }}
-                  animate={{
-                    x: Math.round(
-                      width / 2 +
-                        radius *
-                          Math.cos((index * Math.PI * 2) / props.nodes.length)
-                    ),
-                    y: Math.round(
-                      height / 2 +
-                        radius *
-                          Math.sin((index * Math.PI * 2) / props.nodes.length)
-                    ),
-                  }}
-                >
-                  <div
-                    onClick={() => {
-                      console.log("clicked", node.nodeId);
-                      r.mutate.deleteNode(node.nodeId);
-                    }}
-                    className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center"
-                  >
-                    <div>{node.nodeId}</div>
-                  </div>
-                </motion.div>
+                  node={node}
+                  index={index}
+                  width={width}
+                  height={height}
+                  radius={radius}
+                  totalNodes={props.nodes.length}
+                  onDelete={() => r.mutate.deleteNode(node.nodeId)}
+                />
               )
           )}
         </>
