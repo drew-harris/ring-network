@@ -8,9 +8,11 @@ export const Route = createFileRoute("/simulator")({
 
 function SimulatorLayout() {
   return (
-    <div>
+    <div className="flex flex-col bg-green-600 h-screen">
       <Navbar />
-      <Outlet />
+      <div className="flex-1 bg-purple-800">
+        <Outlet />
+      </div>
     </div>
   );
 }

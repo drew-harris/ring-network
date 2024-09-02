@@ -18,10 +18,5 @@ function SimulatorIndexPage() {
   const data = useSubscribe(r, Node.queries.getAllNodes, {
     default: loadedData,
   });
-  return (
-    <div>
-      <NodeView nodes={data} />
-    </div>
-  );
+  return <NodeView nodes={data} />;
 }
-

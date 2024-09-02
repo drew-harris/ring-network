@@ -97,7 +97,7 @@ export const NodeView = (props: NodeViewProps) => {
   const [scale, setScale] = useState(0.84);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
-    [scale, height, width]
+    [scale, height, width],
   );
 
   const r = useContext(RealtimeClientContext);
@@ -118,7 +118,7 @@ export const NodeView = (props: NodeViewProps) => {
   const isInitialized = width > 0 && height > 0;
 
   return (
-    <div className="min-h-screen relative" ref={componentRef}>
+    <div className="min-h-full h-full bg-blue-800" ref={componentRef}>
       {isInitialized ? (
         <>
           <NodeLines
@@ -161,7 +161,7 @@ export const NodeView = (props: NodeViewProps) => {
                   totalNodes={props.nodes.length}
                   onDelete={() => r.mutate.deleteNode(node.nodeId)}
                 />
-              )
+              ),
           )}
         </>
       ) : null}
