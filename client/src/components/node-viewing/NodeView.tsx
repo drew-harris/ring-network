@@ -66,7 +66,7 @@ export const NodeView = (props: NodeViewProps) => {
   const [scale, setScale] = useState(0.84);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
-    [scale, height, width]
+    [scale, height, width],
   );
 
   const r = useContext(RealtimeClientContext);
@@ -130,7 +130,7 @@ export const NodeView = (props: NodeViewProps) => {
                   totalNodes={props.nodes.length}
                   onDelete={() => r.mutate.deleteNode(node.nodeId)}
                 />
-              )
+              ),
           )}
         </>
       ) : null}
