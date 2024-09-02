@@ -57,15 +57,29 @@ const NodeLines = ({
               }}
               transition={{ duration: 0.1 }}
             />
-            <g className="transition-opacity duration-200 opacity-50 hover:opacity-100 pointer-events-auto">
-              <circle cx={midX} cy={midY} r="10" fill="#404040" />
-              <path
+            <motion.g
+              className="opacity-50 hover:opacity-100 pointer-events-auto"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 0.5 }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.circle
+                cx={midX}
+                cy={midY}
+                r="10"
+                fill="#404040"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.2 }}
+              />
+              <motion.path
                 d="M -6 0 H 6 M 0 -6 V 6"
                 stroke="white"
                 strokeWidth="2"
                 transform={`translate(${midX}, ${midY})`}
               />
-            </g>
+            </motion.g>
           </g>
         );
       })}
@@ -83,7 +97,7 @@ export const NodeView = (props: NodeViewProps) => {
   const [scale, setScale] = useState(0.84);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
-    [scale, height, width],
+    [scale, height, width]
   );
 
   const r = useContext(RealtimeClientContext);
@@ -147,7 +161,7 @@ export const NodeView = (props: NodeViewProps) => {
                   totalNodes={props.nodes.length}
                   onDelete={() => r.mutate.deleteNode(node.nodeId)}
                 />
-              ),
+              )
           )}
         </>
       ) : null}
