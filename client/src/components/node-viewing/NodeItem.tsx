@@ -25,7 +25,12 @@ export const NodeItem = ({
   const y = Math.round(height / 2 + radius * Math.sin(angle));
 
   return (
-    <motion.div className="absolute" initial={{ x, y }} animate={{ x, y }}>
+    <motion.div
+      transition={{ duration: 0.1 }}
+      className="absolute"
+      initial={{ x, y }}
+      animate={{ x, y }}
+    >
       <div
         onClick={() => {
           console.log("clicked", node.nodeId);

@@ -40,15 +40,21 @@ const NodeLines = ({
         return (
           <motion.line
             key={`${node.nodeId}-line`}
-            x1={x}
-            y1={y}
-            x2={nextX}
-            y2={nextY}
+            // x1={x}
+            // y1={y}
+            // x2={nextX}
+            // y2={nextY}
             stroke="#404040"
             strokeWidth="2"
             initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 0.2 }}
+            animate={{
+              x1: x,
+              pathLength: 1,
+              y1: y,
+              x2: nextX,
+              y2: nextY,
+            }}
+            transition={{ duration: 0.1 }}
           />
         );
       })}
