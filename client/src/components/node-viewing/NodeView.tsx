@@ -37,25 +37,36 @@ const NodeLines = ({
         const nextY =
           height / 2 + radius * Math.sin(nextAngle) + nodeHeight / 2;
 
+        // Calculate midpoint for the plus icon
+        const midX = (x + nextX) / 2;
+        const midY = (y + nextY) / 2;
+
         return (
-          <motion.line
-            key={`${node.nodeId}-line`}
-            // x1={x}
-            // y1={y}
-            // x2={nextX}
-            // y2={nextY}
-            stroke="#404040"
-            strokeWidth="2"
-            initial={{ pathLength: 0 }}
-            animate={{
-              x1: x,
-              pathLength: 1,
-              y1: y,
-              x2: nextX,
-              y2: nextY,
-            }}
-            transition={{ duration: 0.1 }}
-          />
+          <g key={`${node.nodeId}-line-group`}>
+            <motion.line
+              key={`${node.nodeId}-line`}
+              stroke="#404040"
+              strokeWidth="2"
+              initial={{ pathLength: 0 }}
+              animate={{
+                x1: x,
+                pathLength: 1,
+                y1: y,
+                x2: nextX,
+                y2: nextY,
+              }}
+              transition={{ duration: 0.1 }}
+            />
+            <g className="transition-opacity duration-200 opacity-50 hover:opacity-100 pointer-events-auto">
+              <circle cx={midX} cy={midY} r="10" fill="#404040" />
+              <path
+                d="M -6 0 H 6 M 0 -6 V 6"
+                stroke="white"
+                strokeWidth="2"
+                transform={`translate(${midX}, ${midY})`}
+              />
+            </g>
+          </g>
         );
       })}
     </svg>
