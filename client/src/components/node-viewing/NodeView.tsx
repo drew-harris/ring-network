@@ -62,12 +62,10 @@ interface NodeViewProps {
 export const NodeView = (props: NodeViewProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerDimensions(componentRef);
-  // Render nodes in a circular pattern like a clock
   const [scale, setScale] = useState(0.84);
-  // const radius = (Math.min(width, height) / 2) * 0.7;
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
-    [scale, height, width],
+    [scale, height, width]
   );
 
   const r = useContext(RealtimeClientContext);
@@ -84,63 +82,85 @@ export const NodeView = (props: NodeViewProps) => {
     r.mutate.createNode({ nodeId: nanoid(4) });
   };
 
+  // Only render content when width and height are non-zero
+  const isInitialized = width > 0 && height > 0;
+
   return (
     <div className="min-h-screen relative" ref={componentRef}>
-      <NodeLines
-        nodes={props.nodes}
-        width={width}
-        height={height}
-        radius={radius}
-      />
-      <div className="absolute">
-        <div> Node Count: {props.nodes.length}</div>
-        <input
-          type="range"
-          min={0.1}
-          max={1}
-          step={0.05}
-          value={scale}
-          onChange={(e) => setScale(Number(e.target.value))}
-        />
-        <Button className="block" variant="outline" onClick={deleteRandomNode}>
-          Delete Random Node
-        </Button>
-        <Button className="block" variant="outline" onClick={createNode}>
-          Create Node
-        </Button>
-      </div>
-      {props.nodes.map(
-        (node, index) =>
-          node.nodeId && (
-            <motion.div
-              key={node.nodeId}
-              className="absolute"
-              initial={false}
-              animate={{
-                x: Math.round(
-                  width / 2 +
-                    radius *
-                      Math.cos((index * Math.PI * 2) / props.nodes.length),
-                ),
-                y: Math.round(
-                  height / 2 +
-                    radius *
-                      Math.sin((index * Math.PI * 2) / props.nodes.length),
-                ),
-              }}
+      {isInitialized ? (
+        <>
+          <NodeLines
+            nodes={props.nodes}
+            width={width}
+            height={height}
+            radius={radius}
+          />
+          <div className="absolute">
+            <div> Node Count: {props.nodes.length}</div>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={scale}
+              onChange={(e) => setScale(Number(e.target.value))}
+            />
+            <Button
+              className="block"
+              variant="outline"
+              onClick={deleteRandomNode}
             >
-              <div
-                onClick={() => {
-                  console.log("clicked", node.nodeId);
-                  r.mutate.deleteNode(node.nodeId);
-                }}
-                className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center"
-              >
-                <div>{node.nodeId}</div>
-              </div>
-            </motion.div>
-          ),
-      )}
+              Delete Random Node
+            </Button>
+            <Button className="block" variant="outline" onClick={createNode}>
+              Create Node
+            </Button>
+          </div>
+          {props.nodes.map(
+            (node, index) =>
+              node.nodeId && (
+                <motion.div
+                  key={node.nodeId}
+                  className="absolute"
+                  initial={{
+                    x: Math.round(
+                      width / 2 +
+                        radius *
+                          Math.cos((index * Math.PI * 2) / props.nodes.length)
+                    ),
+                    y: Math.round(
+                      height / 2 +
+                        radius *
+                          Math.sin((index * Math.PI * 2) / props.nodes.length)
+                    ),
+                  }}
+                  animate={{
+                    x: Math.round(
+                      width / 2 +
+                        radius *
+                          Math.cos((index * Math.PI * 2) / props.nodes.length)
+                    ),
+                    y: Math.round(
+                      height / 2 +
+                        radius *
+                          Math.sin((index * Math.PI * 2) / props.nodes.length)
+                    ),
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      console.log("clicked", node.nodeId);
+                      r.mutate.deleteNode(node.nodeId);
+                    }}
+                    className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center"
+                  >
+                    <div>{node.nodeId}</div>
+                  </div>
+                </motion.div>
+              )
+          )}
+        </>
+      ) : null}
     </div>
   );
 };
