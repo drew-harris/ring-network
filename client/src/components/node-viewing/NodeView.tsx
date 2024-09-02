@@ -59,25 +59,23 @@ const NodeLines = ({
             />
             <motion.g
               className="opacity-50 hover:opacity-100 pointer-events-auto"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.5 }}
+              initial={{ scale: 0, opacity: 0, x: midX, y: midY }}
+              animate={{ scale: 1, opacity: 0.5, x: midX, y: midY }}
               whileHover={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.1 }}
             >
               <motion.circle
-                cx={midX}
-                cy={midY}
                 r="10"
                 fill="#404040"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.1 }}
               />
               <motion.path
                 d="M -6 0 H 6 M 0 -6 V 6"
                 stroke="white"
                 strokeWidth="2"
-                transform={`translate(${midX}, ${midY})`}
+                transition={{ duration: 0.1 }}
               />
             </motion.g>
           </g>
@@ -94,7 +92,7 @@ interface NodeViewProps {
 export const NodeView = (props: NodeViewProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerDimensions(componentRef);
-  const [scale, setScale] = useState(0.84);
+  const [scale, setScale] = useState(0.74);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
     [scale, height, width],
@@ -118,7 +116,7 @@ export const NodeView = (props: NodeViewProps) => {
   const isInitialized = width > 0 && height > 0;
 
   return (
-    <div className="min-h-full h-full bg-blue-800" ref={componentRef}>
+    <div className="min-h-full relative h-full" ref={componentRef}>
       {isInitialized ? (
         <>
           <NodeLines
@@ -127,7 +125,7 @@ export const NodeView = (props: NodeViewProps) => {
             height={height}
             radius={radius}
           />
-          <div className="absolute">
+          <div className="absolute p-8">
             <div> Node Count: {props.nodes.length}</div>
             <input
               type="range"

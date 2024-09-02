@@ -8,9 +8,9 @@ export const Route = createFileRoute("/simulator")({
 
 function SimulatorLayout() {
   return (
-    <div className="flex flex-col bg-green-600 h-screen">
+    <div className="flex flex-col h-screen">
       <Navbar />
-      <div className="flex-1 bg-purple-800">
+      <div className="flex-1">
         <Outlet />
       </div>
     </div>
