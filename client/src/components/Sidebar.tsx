@@ -19,6 +19,9 @@ export const Sidebar = (props: SidebarProps) => {
     <div>
       <div>Sidebar</div>
       <div>{JSON.stringify(data, null, 2)}</div>
+      <button onClick={() => r.mutate.deleteNode(props.selectedNodeId)}>
+        Delete
+      </button>
     </div>
   );
 };
