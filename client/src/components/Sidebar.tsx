@@ -20,8 +20,9 @@ export const Sidebar = (props: SidebarProps) => {
   return (
     <div>
       <div>Sidebar</div>
-      <div>{JSON.stringify(data, null, 2)}</div>
+      <code>{JSON.stringify(data, null, 2)}</code>
       <button
+        className="block pt-8"
         onClick={() => {
           clearSelectedNode();
           r.mutate.deleteNode(props.selectedNodeId);

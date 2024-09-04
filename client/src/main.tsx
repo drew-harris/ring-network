@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Replicache } from "replicache";
-import { nanoid } from "nanoid";
 import { Node } from "core/node";
 import { Message } from "core/message";
 import { Mutations } from "core/utils";
@@ -23,7 +22,7 @@ const rep = new Replicache({
     .extend(Node.mutations)
     .extend(Message.mutations)
     .build(),
-  name: nanoid(5),
+  name: "simulator",
   pullURL: "http://localhost:3000/pull",
 });
 

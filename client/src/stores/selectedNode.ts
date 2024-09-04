@@ -4,10 +4,15 @@ interface SelectedNode {
   selectedNode: string | null;
   setSelectedNode: (node: string) => void;
   clearSelectedNode: () => void;
+  showSidebar: boolean;
+  setShowSidebar: (show: boolean) => void;
 }
 
 export const useSelectedNode = create<SelectedNode>((set) => ({
   selectedNode: null,
-  setSelectedNode: (node: string) => set({ selectedNode: node }),
+  showSidebar: false,
+  setSelectedNode: (node: string) =>
+    set({ selectedNode: node, showSidebar: true }),
   clearSelectedNode: () => set({ selectedNode: null }),
+  setShowSidebar: (show: boolean) => set({ showSidebar: show }),
 }));
