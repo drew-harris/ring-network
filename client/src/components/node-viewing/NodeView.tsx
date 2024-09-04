@@ -92,7 +92,7 @@ interface NodeViewProps {
 export const NodeView = (props: NodeViewProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerDimensions(props.containerRef);
-  const [scale, setScale] = useState(0.74);
+  const [scale, _] = useState(0.74);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
     [scale, height, width],
@@ -101,7 +101,7 @@ export const NodeView = (props: NodeViewProps) => {
   const r = useContext(RealtimeClientContext);
 
   const createNode = () => {
-    r.mutate.createNode({ nodeId: nanoid(4) });
+    r.mutate.createNode({ nodeId: nanoid(4).toUpperCase() });
   };
 
   // Only render content when width and height are non-zero
