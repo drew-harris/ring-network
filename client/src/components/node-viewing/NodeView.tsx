@@ -8,7 +8,6 @@ import { RefObject, useContext, useMemo, useRef, useState } from "react";
 import { NodeItem } from "./NodeItem";
 import { useSelectedNode } from "@/stores/selectedNode";
 
-// New component for drawing lines
 const NodeLines = ({
   nodes,
   width,
@@ -20,7 +19,6 @@ const NodeLines = ({
   height: number;
   radius: number;
 }) => {
-  // Estimate node size (adjust these values based on your actual node size)
   const nodeWidth = 48; // Assuming 48px width
   const nodeHeight = 32; // Assuming 32px height
 
@@ -102,19 +100,6 @@ export const NodeView = (props: NodeViewProps) => {
 
   const r = useContext(RealtimeClientContext);
 
-  const selectedNode = useSelectedNode();
-
-  const deleteRandomNode = () => {
-    const randomNodeId =
-      props.nodes[Math.floor(Math.random() * props.nodes.length)].nodeId;
-
-    console.log("deleting node", randomNodeId);
-    if (selectedNode.selectedNode == randomNodeId) {
-      selectedNode.clearSelectedNode();
-    }
-    r.mutate.deleteNode(randomNodeId);
-  };
-
   const createNode = () => {
     r.mutate.createNode({ nodeId: nanoid(4) });
   };
@@ -132,26 +117,7 @@ export const NodeView = (props: NodeViewProps) => {
             height={height}
             radius={radius}
           />
-          <div className="absolute p-8">
-            <div>
-              DIMENSIONS: {width}x{height}
-            </div>
-            <div> Node Count: {props.nodes.length}</div>
-            <input
-              type="range"
-              min={0.1}
-              max={1}
-              step={0.05}
-              value={scale}
-              onChange={(e) => setScale(Number(e.target.value))}
-            />
-            <Button
-              className="block"
-              variant="outline"
-              onClick={deleteRandomNode}
-            >
-              Delete Random Node
-            </Button>
+          <div className="absolute p-2">
             <Button className="block" variant="outline" onClick={createNode}>
               Create Node
             </Button>
