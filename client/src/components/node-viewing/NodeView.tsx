@@ -157,7 +157,6 @@ export const NodeView = (props: NodeViewProps) => {
                   height={height}
                   radius={radius}
                   totalNodes={props.nodes.length}
-                  onDelete={() => r.mutate.deleteNode(node.nodeId)}
                 />
               ),
           )}

@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
 import { Node } from "core/node";
+import { cn } from "@/lib/utils";
+import { useContext, useState } from "react";
+import { RealtimeClientContext } from "@/main";
+import { createPortal } from "react-dom";
+import { useSelectedNode } from "@/stores/selectedNode";
 
 interface NodeItemProps {
   node: Node.Info;
@@ -8,7 +13,6 @@ interface NodeItemProps {
   height: number;
   radius: number;
   totalNodes: number;
-  onDelete: () => void;
 }
 
 export const NodeItem = ({
@@ -18,25 +22,35 @@ export const NodeItem = ({
   height,
   radius,
   totalNodes,
-  onDelete,
 }: NodeItemProps) => {
   const angle = (index * Math.PI * 2) / totalNodes;
   const x = Math.round(width / 2 + radius * Math.cos(angle));
   const y = Math.round(height / 2 + radius * Math.sin(angle));
 
+  const selectedNode = useSelectedNode((state) => state.selectedNode);
+  const setSelectedNode = useSelectedNode((s) => s.setSelectedNode);
+
   return (
     <motion.div
       transition={{ duration: 0.1 }}
-      className="absolute"
+      layoutId={node.nodeId}
+      layout
+      className={cn(
+        "absolute cursor-pointer",
+        node.status == "inactive" && "opacity-50",
+      )}
       initial={{ x, y }}
       animate={{ x, y }}
     >
       <div
         onClick={() => {
-          console.log("clicked", node.nodeId);
-          onDelete();
+          setSelectedNode(node.nodeId);
         }}
-        className="p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center"
+        className={cn(
+          "p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center",
+          selectedNode == node.nodeId &&
+            "outline outline-2 outline-primary-500",
+        )}
       >
         <div>{node.nodeId}</div>
       </div>

@@ -32,6 +32,24 @@ export module Node {
     .register("deleteNode", z.string(), async (tx, input) => {
       console.log("deleting node", input);
       await tx.del(`nodes/${input}`);
+    })
+    .register("toggleStatus", z.string(), async (tx, input) => {
+      console.log("toggling status", input);
+      const node = await tx.get<Info>(`nodes/${input}`);
+      if (!node) {
+        return;
+      }
+      if (node.status === "active") {
+        await tx.set(`nodes/${input}`, {
+          ...node,
+          status: "inactive",
+        });
+      } else {
+        await tx.set(`nodes/${input}`, {
+          ...node,
+          status: "active",
+        });
+      }
     });
 
   export const getInitialState = () => {

@@ -1,4 +1,4 @@
-import { Mutations } from "./utils";
+import { Mutations, query } from "./utils";
 import { z } from "./zod";
 
 export module Message {
@@ -32,4 +32,17 @@ export module Message {
     .register("blank", z.null(), () => {
       return "good work drew";
     });
+
+  export const queries = {
+    // Get messages for a node by reciverId
+    getMessagesForNode: query(z.string(), async (tx, input) => {
+      const messages = await tx
+        .scan<Message.Info>({
+          prefix: `messages`,
+        })
+        .values()
+        .toArray();
+      return messages.filter((message) => message.reciverId === input);
+    }),
+  };
 }
