@@ -4,8 +4,9 @@ import { RealtimeClientContext } from "@/main";
 import { Node } from "core/node";
 import { motion } from "framer-motion";
 import { nanoid } from "nanoid";
-import { useContext, useMemo, useRef, useState } from "react";
+import { RefObject, useContext, useMemo, useRef, useState } from "react";
 import { NodeItem } from "./NodeItem";
+import { useSelectedNode } from "@/stores/selectedNode";
 
 // New component for drawing lines
 const NodeLines = ({
@@ -87,11 +88,12 @@ const NodeLines = ({
 
 interface NodeViewProps {
   nodes: Node.Info[];
+  containerRef: RefObject<HTMLDivElement>;
 }
 
 export const NodeView = (props: NodeViewProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
-  const { width, height } = useContainerDimensions(componentRef);
+  const { width, height } = useContainerDimensions(props.containerRef);
   const [scale, setScale] = useState(0.74);
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
@@ -100,11 +102,16 @@ export const NodeView = (props: NodeViewProps) => {
 
   const r = useContext(RealtimeClientContext);
 
+  const selectedNode = useSelectedNode();
+
   const deleteRandomNode = () => {
     const randomNodeId =
       props.nodes[Math.floor(Math.random() * props.nodes.length)].nodeId;
 
     console.log("deleting node", randomNodeId);
+    if (selectedNode.selectedNode == randomNodeId) {
+      selectedNode.clearSelectedNode();
+    }
     r.mutate.deleteNode(randomNodeId);
   };
 
@@ -126,6 +133,9 @@ export const NodeView = (props: NodeViewProps) => {
             radius={radius}
           />
           <div className="absolute p-8">
+            <div>
+              DIMENSIONS: {width}x{height}
+            </div>
             <div> Node Count: {props.nodes.length}</div>
             <input
               type="range"

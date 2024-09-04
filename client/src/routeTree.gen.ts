@@ -16,7 +16,6 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as SimulatorIndexImport } from './routes/simulator/index'
-import { Route as SimulatorLayoutImport } from './routes/simulator/_layout'
 
 // Create/Update Routes
 
@@ -42,11 +41,6 @@ const IndexRoute = IndexImport.update({
 
 const SimulatorIndexRoute = SimulatorIndexImport.update({
   path: '/',
-  getParentRoute: () => SimulatorRoute,
-} as any)
-
-const SimulatorLayoutRoute = SimulatorLayoutImport.update({
-  id: '/_layout',
   getParentRoute: () => SimulatorRoute,
 } as any)
 
@@ -81,13 +75,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/simulator'
       preLoaderRoute: typeof SimulatorImport
       parentRoute: typeof rootRoute
-    }
-    '/simulator/_layout': {
-      id: '/simulator/_layout'
-      path: ''
-      fullPath: '/simulator'
-      preLoaderRoute: typeof SimulatorLayoutImport
-      parentRoute: typeof SimulatorImport
     }
     '/simulator/': {
       id: '/simulator/'
@@ -134,13 +121,8 @@ export const routeTree = rootRoute.addChildren({
     "/simulator": {
       "filePath": "simulator.tsx",
       "children": [
-        "/simulator/_layout",
         "/simulator/"
       ]
-    },
-    "/simulator/_layout": {
-      "filePath": "simulator/_layout.tsx",
-      "parent": "/simulator"
     },
     "/simulator/": {
       "filePath": "simulator/index.tsx",

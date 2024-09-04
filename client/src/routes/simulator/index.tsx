@@ -1,8 +1,9 @@
 import { NodeView } from "@/components/node-viewing/NodeView";
+import { Sidebar } from "@/components/Sidebar";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Node } from "core/node";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { useSubscribe } from "replicache-react";
 
 export const Route = createFileRoute("/simulator/")({
@@ -18,5 +19,13 @@ function SimulatorIndexPage() {
   const data = useSubscribe(r, Node.queries.getAllNodes, {
     default: loadedData,
   });
-  return <NodeView nodes={data} />;
+  const componentRef = useRef<HTMLDivElement>(null);
+  return (
+    <div className="flex grow h-full">
+      <div ref={componentRef} className="grow">
+        <NodeView containerRef={componentRef} nodes={data} />
+      </div>
+      <Sidebar />
+    </div>
+  );
 }

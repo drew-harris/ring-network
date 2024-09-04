@@ -5,23 +5,26 @@ export const useContainerDimensions = (myRef: RefObject<HTMLDivElement>) => {
 
   useEffect(() => {
     const getDimensions = () => ({
-      width: myRef?.current?.offsetWidth || 0,
-      height: myRef?.current?.offsetHeight || 0,
+      width: myRef.current?.offsetWidth || 0,
+      height: myRef.current?.offsetHeight || 0,
     });
 
-    const handleResize = () => {
-      setDimensions(getDimensions());
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      if (entries[0]) {
+        setDimensions(getDimensions());
+      }
     };
 
     if (myRef.current) {
       setDimensions(getDimensions());
+
+      const resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(myRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
     }
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
   }, [myRef]);
 
   return dimensions;
