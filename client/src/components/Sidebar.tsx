@@ -8,8 +8,12 @@ interface SidebarProps {
 }
 export const Sidebar = (props: SidebarProps) => {
   const r = useContext(RealtimeClientContext);
-  const data = useSubscribe(r, (tx) =>
-    Node.queries.singleNode(tx, props.selectedNodeId),
+  const data = useSubscribe(
+    r,
+    (tx) => Node.queries.singleNode(tx, props.selectedNodeId),
+    {
+      dependencies: [props.selectedNodeId],
+    },
   );
   return (
     <div>

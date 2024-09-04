@@ -18,7 +18,7 @@ export const SidebarShower = () => {
           <Sidebar selectedNodeId={selectedNode} />
           <div
             onClick={clearSelectedNode}
-            className="absolute top-0 right-0 p-2 bg-neutral-800/50 rounded-md hover:bg-neutral-700/50 cursor-pointer"
+            className="absolute top-0 right-0 p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
