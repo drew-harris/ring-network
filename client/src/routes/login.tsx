@@ -21,7 +21,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col p-12 items-center justify-center">
+    <div className="min-h-screen background flex flex-col p-12 items-center justify-center">
       <div className="absolute hover:underline top-4 right-6">
         <Link to="/register">Register</Link>
       </div>
