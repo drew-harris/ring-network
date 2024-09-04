@@ -152,5 +152,10 @@ export module Node {
 
       return orderedNodes;
     },
+
+    singleNode: async (tx: ReadTransaction, nodeId: string) => {
+      const node = await tx.get<Node.Info>(`nodes/${nodeId}`);
+      return node;
+    },
   };
 }

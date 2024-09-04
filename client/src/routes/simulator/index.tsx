@@ -1,5 +1,5 @@
 import { NodeView } from "@/components/node-viewing/NodeView";
-import { Sidebar } from "@/components/Sidebar";
+import { SidebarShower } from "@/components/SidebarShower";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Node } from "core/node";
@@ -25,7 +25,7 @@ function SimulatorIndexPage() {
       <div ref={componentRef} className="grow">
         <NodeView containerRef={componentRef} nodes={data} />
       </div>
-      <Sidebar />
+      <SidebarShower />
     </div>
   );
 }
