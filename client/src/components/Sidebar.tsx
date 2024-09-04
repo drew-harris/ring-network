@@ -19,7 +19,6 @@ export const Sidebar = (props: SidebarProps) => {
   );
   return (
     <div>
-      <div>Sidebar</div>
       <code>{JSON.stringify(data, null, 2)}</code>
       <button
         className="block pt-8"
