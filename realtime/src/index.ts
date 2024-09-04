@@ -17,7 +17,7 @@ app.post("/pull", async (c) => {
     cookie: 42,
     patch: [
       { op: "clear" },
-      ...Node.getInitialState().map((n) => Node.transformNodeToOpt(n)),
+      ...Node.getInitialState().map((n) => Node.transformNodeToOp(n)),
     ],
   });
 });

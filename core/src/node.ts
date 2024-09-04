@@ -117,7 +117,7 @@ export module Node {
     ] satisfies Info[];
   };
 
-  export const transformNodeToOpt = (node: Info) => {
+  export const transformNodeToOp = (node: Info) => {
     return {
       op: "put",
       key: `nodes/${node.nodeId}`,
