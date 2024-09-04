@@ -50,6 +50,7 @@ export const NodeItem = ({
           "p-2 bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center",
           selectedNode == node.nodeId &&
             "outline outline-2 outline-primary-500",
+          node.status == "inactive" && "opacity-50",
         )}
       >
         <div>{node.nodeId}</div>

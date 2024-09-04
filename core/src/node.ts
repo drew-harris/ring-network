@@ -25,7 +25,7 @@ export module Node {
           leftNeighbor: "liw",
           nodeId: input.nodeId,
           rightNeighbor: "8023",
-          status: "inactive",
+          status: "active",
         } satisfies Info);
       },
     )

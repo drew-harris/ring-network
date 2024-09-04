@@ -30,6 +30,14 @@ export const Sidebar = (props: SidebarProps) => {
       >
         Delete
       </button>
+      <button
+        className="block pt-8"
+        onClick={() => {
+          r.mutate.toggleStatus(props.selectedNodeId);
+        }}
+      >
+        Toggle Active
+      </button>
     </div>
   );
 };
