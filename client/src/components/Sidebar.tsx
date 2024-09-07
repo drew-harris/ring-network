@@ -1,5 +1,7 @@
 import { SidebarMessageList } from "@/components/messages/SidebarMessageList";
+import { SidebarSendForm } from "@/components/messages/SidebarSendForm";
 import { IconButton } from "@/components/ui/iconbutton";
+import { Separator } from "@/components/ui/separator";
 import { RealtimeClientContext } from "@/main";
 import { useSelectedNode } from "@/stores/selectedNode";
 import { Node } from "core/node";
@@ -80,6 +82,9 @@ export const Sidebar = (props: SidebarProps) => {
           <RefreshCw size={14} />
         </IconButton>
       </div>
+      <Separator className="mt-4" />
+      <SidebarSendForm nodeId={data.nodeId} />
+      <Separator className="mt-4" />
       <SidebarMessageList />
     </div>
   );

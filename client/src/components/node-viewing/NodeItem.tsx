@@ -29,6 +29,7 @@ export const NodeItem = ({
 
   const selectedNode = useSelectedNode((state) => state.selectedNode);
   const setSelectedNode = useSelectedNode((s) => s.setSelectedNode);
+  const hoveredNode = useSelectedNode((state) => state.hoverNode);
 
   return (
     <motion.div
@@ -40,7 +41,7 @@ export const NodeItem = ({
         node.status == "inactive" && "opacity-50",
       )}
       initial={{ x, y }}
-      animate={{ x, y }}
+      animate={{ x, y, scale: hoveredNode == node.nodeId ? 1.4 : 1 }}
     >
       <div
         onClick={() => {
