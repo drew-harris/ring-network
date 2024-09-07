@@ -9,6 +9,7 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
+import { nanoid } from "nanoid";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -22,7 +23,7 @@ const rep = new Replicache({
     .extend(Node.mutations)
     .extend(Message.mutations)
     .build(),
-  name: "simulator",
+  name: nanoid(5),
   pullURL: "http://localhost:3000/pull",
 });
 

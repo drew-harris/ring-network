@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useContainerDimensions } from "@/lib/containerSize";
 import { RealtimeClientContext } from "@/main";
 import { Node } from "core/node";
@@ -6,7 +5,6 @@ import { motion } from "framer-motion";
 import { nanoid } from "nanoid";
 import { RefObject, useContext, useMemo, useRef, useState } from "react";
 import { NodeItem } from "./NodeItem";
-import { useSelectedNode } from "@/stores/selectedNode";
 
 const NodeLines = ({
   nodes,
@@ -20,6 +18,7 @@ const NodeLines = ({
   radius: number;
 }) => {
   const nodeWidth = 48; // Assuming 48px width
+  const r = useContext(RealtimeClientContext);
   const nodeHeight = 32; // Assuming 32px height
 
   return (
@@ -40,6 +39,13 @@ const NodeLines = ({
         const midX = (x + nextX) / 2;
         const midY = (y + nextY) / 2;
 
+        const createNode = () => {
+          r.mutate.insertNode({
+            after: node.nodeId,
+            nodeId: nanoid(4).toUpperCase(),
+          });
+        };
+
         return (
           <g key={`${node.nodeId}-line-group`}>
             <motion.line
@@ -57,12 +63,23 @@ const NodeLines = ({
               transition={{ duration: 0.1 }}
             />
             <motion.g
+              onClick={createNode}
               className="opacity-50 hover:opacity-100 pointer-events-auto"
               initial={{ scale: 0, opacity: 0, x: midX, y: midY }}
               animate={{ scale: 1, opacity: 0.5, x: midX, y: midY }}
               whileHover={{ opacity: 1 }}
               transition={{ duration: 0.1 }}
             >
+              <motion.text
+                // initial={{
+                //   x: midX,
+                //   y: midY,
+                // }}
+                color="white"
+                className="text-xs text-white"
+              >
+                {node.nodeId}
+              </motion.text>
               <motion.circle
                 r="10"
                 fill="#404040"
@@ -100,10 +117,6 @@ export const NodeView = (props: NodeViewProps) => {
 
   const r = useContext(RealtimeClientContext);
 
-  const createNode = () => {
-    r.mutate.createNode({ nodeId: nanoid(4).toUpperCase() });
-  };
-
   // Only render content when width and height are non-zero
   const isInitialized = width > 0 && height > 0;
 
@@ -117,11 +130,6 @@ export const NodeView = (props: NodeViewProps) => {
             height={height}
             radius={radius}
           />
-          <div className="absolute p-2">
-            <Button className="block" variant="outline" onClick={createNode}>
-              Create Node
-            </Button>
-          </div>
           {props.nodes.map(
             (node, index) =>
               node.nodeId && (

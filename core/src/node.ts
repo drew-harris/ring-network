@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Mutations } from "./utils";
-import { ReadTransaction } from "replicache";
+import { ReadTransaction, WriteTransaction } from "replicache";
 export module Node {
   export const Info = z.object({
     nodeId: z.string(),
@@ -13,23 +13,76 @@ export module Node {
 
   export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
 
+  const getNode = async (
+    tx: WriteTransaction | ReadTransaction,
+    nodeId: string,
+  ) => {
+    return tx.get<Info>(`nodes/${nodeId}`);
+  };
+
   export const mutations = new Mutations()
     .register(
-      "createNode",
+      "insertNode",
       z.object({
         nodeId: z.string(),
+        after: z.string(), // The node id it comes after
       }),
       async (tx, input) => {
         console.log("creating node", input);
-        await tx.set(`nodes/${input.nodeId}`, {
-          leftNeighbor: "liw",
-          nodeId: input.nodeId,
-          rightNeighbor: "8023",
+        const nodeId = input.nodeId;
+        const after = input.after;
+
+        // Check if nodeId already exists
+        const existingNode = await getNode(tx, nodeId);
+        if (existingNode) {
+          throw new Error(`Node with id ${nodeId} already exists`);
+        }
+
+        // Rewrite the node it comes after
+        const right = await getNode(tx, after);
+        if (!right) {
+          throw new Error(`Node with id ${after} does not exist`);
+        }
+
+        const left = await getNode(tx, right?.leftNeighbor);
+        if (!left) {
+          throw new Error(`Node with id ${right.rightNeighbor} does not exist`);
+        }
+
+        // Create the node
+        await tx.set(`nodes/${nodeId}`, {
+          leftNeighbor: left.nodeId,
+          nodeId,
+          rightNeighbor: left.rightNeighbor,
           status: "active",
-        } satisfies Info);
+        });
+
+        // Rewrite the left node
+        await tx.set(`nodes/${left.nodeId}`, {
+          ...left,
+          rightNeighbor: nodeId,
+        });
+
+        // Rewrite the right node
+        await tx.set(`nodes/${right.nodeId}`, {
+          ...right,
+          leftNeighbor: nodeId,
+        });
       },
     )
     .register("deleteNode", z.string(), async (tx, input) => {
+      // Make sure the length of nodes > 3
+      const nodes = await tx
+        .scan<Node.Info>({
+          prefix: "nodes",
+        })
+        .values()
+        .toArray();
+
+      if (nodes.length <= 3) {
+        throw new Error("Cannot delete last node");
+      }
+
       console.log("deleting node", input);
       await tx.del(`nodes/${input}`);
     })
@@ -79,15 +132,15 @@ export module Node {
         status: "active",
       },
       {
-        leftNeighbor: "N-4",
-        nodeId: "N-5",
-        rightNeighbor: "N-6",
-        status: "active",
-      },
-      {
         leftNeighbor: "N-5",
         nodeId: "N-6",
         rightNeighbor: "N-7",
+        status: "active",
+      },
+      {
+        leftNeighbor: "N-4",
+        nodeId: "N-5",
+        rightNeighbor: "N-6",
         status: "active",
       },
       {
@@ -135,22 +188,35 @@ export module Node {
         .toArray();
 
       // Order nodes by leftNeighbor
-      const orderedNodes = nodes.sort((a, b) => {
-        const numberPartOfIdA = parseInt(a.nodeId.split("-")[1]);
-        const numberPartOfIdB = parseInt(b.nodeId.split("-")[1]);
+      console.log("nodes", nodes);
+      const first = nodes.find((node) => node.nodeId === "N-1");
 
-        if (numberPartOfIdA < numberPartOfIdB) {
-          return -1;
+      if (!first) {
+        console.log("no nodes found", nodes);
+        return [];
+      }
+
+      let finalList: Info[] = [first];
+      let nextOne: undefined | Info = await getNode(tx, first.leftNeighbor);
+      if (!nextOne) {
+        return [];
+      }
+      while (nextOne !== first) {
+        if (!nextOne) {
+          break;
         }
-
-        if (numberPartOfIdA > numberPartOfIdB) {
-          return 1;
+        finalList.push(nextOne);
+        const possNext = await tx.get<Node.Info>(
+          `nodes/${nextOne.leftNeighbor}`,
+        );
+        if (!possNext) {
+          break;
         }
+        nextOne = possNext;
+      }
 
-        return 0;
-      });
-
-      return orderedNodes;
+      console.log("final list", finalList);
+      return finalList;
     },
 
     singleNode: async (tx: ReadTransaction, nodeId: string) => {
