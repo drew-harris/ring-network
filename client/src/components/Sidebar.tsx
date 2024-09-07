@@ -19,18 +19,18 @@ export const Sidebar = (props: SidebarProps) => {
     },
   );
 
-  // const nodeAfter = useSubscribe(
-  //   r,
-  //   async (tx) => {
-  //     const allNodes = await Node.queries.getAllNodes(tx);
-  //     return allNodes.find(
-  //       (node) => node.leftNeighbor === props.selectedNodeId,
-  //     );
-  //   },
-  //   {
-  //     dependencies: [props.selectedNodeId],
-  //   },
-  // );
+  const nodeAfter = useSubscribe(
+    r,
+    async (tx) => {
+      const allNodes = await Node.queries.getAllNodes(tx);
+      return allNodes.find(
+        (node) => node.leftNeighbor === props.selectedNodeId,
+      );
+    },
+    {
+      dependencies: [props.selectedNodeId],
+    },
+  );
 
   if (!data) {
     return null;
@@ -38,7 +38,7 @@ export const Sidebar = (props: SidebarProps) => {
   return (
     <div>
       <div className="text-lg font-bold">{data.nodeId}</div>
-      <div className="flex items-center justify-center gap-2 w-full">
+      <div className="flex gap-2 w-full">
         <IconButton
           label="Delete"
           onClick={() => {
@@ -58,17 +58,28 @@ export const Sidebar = (props: SidebarProps) => {
         <IconButton
           label="Rotate"
           onClick={() => {
-            // if (nodeAfter) {
-            //   r.mutate.swapWith({
-            //     nodeId1: props.selectedNodeId,
-            //     nodeId2: nodeAfter?.nodeId,
-            //   });
-            // }
+            if (nodeAfter) {
+              // r.mutate.swapWithPrevNode({
+              //   nodeId: props.selectedNodeId,
+              // });
+            }
           }}
         >
           <RefreshCw size={14} />
         </IconButton>
       </div>
+      <code>
+        {JSON.stringify(
+          {
+            nodeId: data.nodeId,
+            leftNeighbor: data.leftNeighbor,
+            rightNeighbor: data.rightNeighbor,
+            status: data.status,
+          },
+          null,
+          2,
+        )}
+      </code>
     </div>
   );
 };

@@ -268,11 +268,9 @@ export module Node {
         .toArray();
 
       // Order nodes by leftNeighbor
-      console.log("nodes", nodes);
       const first = nodes.find((node) => node.nodeId === "N-1");
 
       if (!first) {
-        console.log("no nodes found", nodes);
         return [];
       }
 
@@ -295,7 +293,6 @@ export module Node {
         nextOne = possNext;
       }
 
-      console.log("final list", finalList);
       return finalList;
     },
 
