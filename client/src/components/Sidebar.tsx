@@ -1,15 +1,16 @@
+import { IconButton } from "@/components/ui/iconbutton";
 import { RealtimeClientContext } from "@/main";
-import { useSelectedNode } from "@/stores/selectedNode";
 import { Node } from "core/node";
+import { Power, RefreshCw, Trash } from "lucide-react";
 import { useContext } from "react";
 import { useSubscribe } from "replicache-react";
 
 interface SidebarProps {
   selectedNodeId: string;
 }
+
 export const Sidebar = (props: SidebarProps) => {
   const r = useContext(RealtimeClientContext);
-  const clearSelectedNode = useSelectedNode((s) => s.clearSelectedNode);
   const data = useSubscribe(
     r,
     (tx) => Node.queries.singleNode(tx, props.selectedNodeId),
@@ -17,26 +18,57 @@ export const Sidebar = (props: SidebarProps) => {
       dependencies: [props.selectedNodeId],
     },
   );
+
+  // const nodeAfter = useSubscribe(
+  //   r,
+  //   async (tx) => {
+  //     const allNodes = await Node.queries.getAllNodes(tx);
+  //     return allNodes.find(
+  //       (node) => node.leftNeighbor === props.selectedNodeId,
+  //     );
+  //   },
+  //   {
+  //     dependencies: [props.selectedNodeId],
+  //   },
+  // );
+
+  if (!data) {
+    return null;
+  }
   return (
     <div>
-      <code>{JSON.stringify(data, null, 2)}</code>
-      <button
-        className="block pt-8"
-        onClick={() => {
-          clearSelectedNode();
-          r.mutate.deleteNode(props.selectedNodeId);
-        }}
-      >
-        Delete
-      </button>
-      <button
-        className="block pt-8"
-        onClick={() => {
-          r.mutate.toggleStatus(props.selectedNodeId);
-        }}
-      >
-        Toggle Active
-      </button>
+      <div className="text-lg font-bold">{data.nodeId}</div>
+      <div className="flex items-center justify-center gap-2 w-full">
+        <IconButton
+          label="Delete"
+          onClick={() => {
+            r.mutate.deleteNode(props.selectedNodeId);
+          }}
+        >
+          <Trash size={14} />
+        </IconButton>
+        <IconButton
+          label="Toggle Active"
+          onClick={() => {
+            r.mutate.toggleStatus(props.selectedNodeId);
+          }}
+        >
+          <Power size={14} />
+        </IconButton>
+        <IconButton
+          label="Rotate"
+          onClick={() => {
+            // if (nodeAfter) {
+            //   r.mutate.swapWith({
+            //     nodeId1: props.selectedNodeId,
+            //     nodeId2: nodeAfter?.nodeId,
+            //   });
+            // }
+          }}
+        >
+          <RefreshCw size={14} />
+        </IconButton>
+      </div>
     </div>
   );
 };

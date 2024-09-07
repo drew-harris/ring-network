@@ -70,6 +70,7 @@ export module Node {
         });
       },
     )
+
     .register("deleteNode", z.string(), async (tx, input) => {
       // Make sure the length of nodes > 3
       const nodes = await tx
@@ -84,6 +85,30 @@ export module Node {
       }
 
       console.log("deleting node", input);
+      const nodeToDelete = await getNode(tx, input);
+      if (!nodeToDelete) {
+        throw new Error(`Node with id ${input} does not exist`);
+      }
+
+      // Update left neighbor
+      const leftNeighbor = await getNode(tx, nodeToDelete.leftNeighbor);
+      if (leftNeighbor) {
+        await tx.set(`nodes/${leftNeighbor.nodeId}`, {
+          ...leftNeighbor,
+          rightNeighbor: nodeToDelete.rightNeighbor,
+        });
+      }
+
+      // Update right neighbor
+      const rightNeighbor = await getNode(tx, nodeToDelete.rightNeighbor);
+      if (rightNeighbor) {
+        await tx.set(`nodes/${rightNeighbor.nodeId}`, {
+          ...rightNeighbor,
+          leftNeighbor: nodeToDelete.leftNeighbor,
+        });
+      }
+
+      // Delete the node
       await tx.del(`nodes/${input}`);
     })
     .register("toggleStatus", z.string(), async (tx, input) => {
@@ -104,6 +129,61 @@ export module Node {
         });
       }
     });
+  // .register(
+  //   "swapWith",
+  //   z.object({
+  //     nodeId1: z.string(),
+  //     nodeId2: z.string(),
+  //   }),
+  //   async (tx, input) => {
+  //     console.log("swapping nodes", input);
+  //     const { nodeId1, nodeId2 } = input;
+  //
+  //     const node1 = await getNode(tx, nodeId1);
+  //     const node2 = await getNode(tx, nodeId2);
+  //
+  //     if (!node1 || !node2) {
+  //       throw new Error("One or both nodes do not exist");
+  //     }
+  //
+  //     // Swap the neighbors of the two nodes
+  //     await tx.set(`nodes/${nodeId1}`, {
+  //       ...node1,
+  //       leftNeighbor: node2.leftNeighbor,
+  //       rightNeighbor: node2.rightNeighbor,
+  //     });
+  //
+  //     await tx.set(`nodes/${nodeId2}`, {
+  //       ...node2,
+  //       leftNeighbor: node1.leftNeighbor,
+  //       rightNeighbor: node1.rightNeighbor,
+  //     });
+  //
+  //     // Update the neighbors of the swapped nodes
+  //     const updateNeighbor = async (
+  //       neighborId: string,
+  //       oldNodeId: string,
+  //       newNodeId: string,
+  //       isLeft: boolean,
+  //     ) => {
+  //       const neighbor = await getNode(tx, neighborId);
+  //       if (neighbor) {
+  //         const side = isLeft ? "rightNeighbor" : "leftNeighbor";
+  //         if (neighbor[side] === oldNodeId) {
+  //           await tx.set(`nodes/${neighborId}`, {
+  //             ...neighbor,
+  //             [side]: newNodeId,
+  //           });
+  //         }
+  //       }
+  //     };
+  //
+  //     await updateNeighbor(node1.leftNeighbor, nodeId1, nodeId2, true);
+  //     await updateNeighbor(node1.rightNeighbor, nodeId1, nodeId2, false);
+  //     await updateNeighbor(node2.leftNeighbor, nodeId2, nodeId1, true);
+  //     await updateNeighbor(node2.rightNeighbor, nodeId2, nodeId1, false);
+  //   },
+  // );
 
   export const getInitialState = () => {
     return [

@@ -70,16 +70,6 @@ const NodeLines = ({
               whileHover={{ opacity: 1 }}
               transition={{ duration: 0.1 }}
             >
-              <motion.text
-                // initial={{
-                //   x: midX,
-                //   y: midY,
-                // }}
-                color="white"
-                className="text-xs text-white"
-              >
-                {node.nodeId}
-              </motion.text>
               <motion.circle
                 r="10"
                 fill="#404040"
