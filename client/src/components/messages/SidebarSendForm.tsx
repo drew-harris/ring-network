@@ -11,7 +11,7 @@ import { RealtimeClientContext } from "@/main";
 import { useSelectedNode } from "@/stores/selectedNode";
 import { Node } from "core/node";
 import { nanoid } from "nanoid";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useSubscribe } from "replicache-react";
 
 interface SidebarSendFormProps {
