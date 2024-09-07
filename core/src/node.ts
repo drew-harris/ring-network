@@ -300,5 +300,16 @@ export module Node {
       const node = await tx.get<Node.Info>(`nodes/${nodeId}`);
       return node;
     },
+
+    totalNodeCount: async (tx: ReadTransaction) => {
+      const nodes = await tx
+        .scan<Node.Info>({
+          prefix: "nodes",
+        })
+        .values()
+        .toArray();
+
+      return nodes.length;
+    },
   };
 }

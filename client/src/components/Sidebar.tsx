@@ -1,5 +1,7 @@
+import { SidebarMessageList } from "@/components/messages/SidebarMessageList";
 import { IconButton } from "@/components/ui/iconbutton";
 import { RealtimeClientContext } from "@/main";
+import { useSelectedNode } from "@/stores/selectedNode";
 import { Node } from "core/node";
 import { Power, RefreshCw, Trash } from "lucide-react";
 import { useContext } from "react";
@@ -18,6 +20,12 @@ export const Sidebar = (props: SidebarProps) => {
       dependencies: [props.selectedNodeId],
     },
   );
+
+  const sel = useSelectedNode();
+
+  const totalNodeCount = useSubscribe(r, Node.queries.totalNodeCount, {
+    default: 0,
+  });
 
   const nodeAfter = useSubscribe(
     r,
@@ -40,8 +48,12 @@ export const Sidebar = (props: SidebarProps) => {
       <div className="text-lg font-bold">{data.nodeId}</div>
       <div className="flex gap-2 w-full">
         <IconButton
+          disabled={totalNodeCount <= 3}
           label="Delete"
           onClick={() => {
+            // Unselect the node
+            // sel.clearSelectedNode();
+            sel.setSelectedNode(data.leftNeighbor);
             r.mutate.deleteNode(props.selectedNodeId);
           }}
         >
@@ -68,18 +80,7 @@ export const Sidebar = (props: SidebarProps) => {
           <RefreshCw size={14} />
         </IconButton>
       </div>
-      <code>
-        {JSON.stringify(
-          {
-            nodeId: data.nodeId,
-            leftNeighbor: data.leftNeighbor,
-            rightNeighbor: data.rightNeighbor,
-            status: data.status,
-          },
-          null,
-          2,
-        )}
-      </code>
+      <SidebarMessageList />
     </div>
   );
 };

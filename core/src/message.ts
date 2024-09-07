@@ -26,7 +26,13 @@ export module Message {
         message: z.string(),
       }),
       (tx, input) => {
-        return tx.set(input.messageId, input);
+        return tx.set(input.messageId, {
+          ...input,
+          createdAt: new Date().toISOString(),
+          direction: "left",
+          path: [],
+          receivedAt: new Date().toISOString(),
+        } satisfies Info);
       },
     )
     .register("blank", z.null(), () => {

@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Tabs } from "@/components/ui/tabs";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -31,6 +34,7 @@ function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <Separator />
           <Input
             type="text"
             placeholder="First Name"
@@ -43,6 +47,7 @@ function Register() {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
           />
+          <Separator />
           <Input
             type="password"
             placeholder="Password"
