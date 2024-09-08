@@ -3,6 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface IconButtonProps {
   children: React.ReactNode;
@@ -22,9 +23,12 @@ export const IconButton = ({
     <Tooltip delayDuration={100}>
       <TooltipTrigger>
         <button
-          className={`${className} flex items-center justify-center w-10 h-10 rounded-md bg-neutral-600 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-500 ${
-            disabled ? "cursor-not-allowed opacity-50" : ""
-          }`}
+          className={cn(
+            `flex items-center justify-center w-10 h-10 rounded-md bg-neutral-600 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-500 ${
+              disabled ? "cursor-not-allowed opacity-50" : ""
+            }`,
+            className,
+          )}
           onClick={onClick}
           disabled={disabled}
         >

@@ -35,8 +35,8 @@ export module Message {
         } satisfies Info);
       },
     )
-    .register("blank", z.null(), () => {
-      return "good work drew";
+    .register("deleteMessage", z.string(), async (tx, input) => {
+      return await tx.del(`messages/${input}`);
     });
 
   export const queries = {
@@ -48,7 +48,6 @@ export module Message {
         })
         .values()
         .toArray();
-      console.log(messages);
       return messages.filter((message) => message.reciverId === input);
     }),
   };
