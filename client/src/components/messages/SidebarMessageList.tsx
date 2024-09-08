@@ -1,29 +1,41 @@
-export const SidebarMessageList = () => {
+import { RealtimeClientContext } from "@/main";
+import { Message } from "core/message";
+import { useContext } from "react";
+import { useSubscribe } from "replicache-react";
+
+interface SidebarMessageListProps {
+  nodeId: string;
+}
+
+export const SidebarMessageList = (props: SidebarMessageListProps) => {
+  const r = useContext(RealtimeClientContext);
+  const messages = useSubscribe(
+    r,
+    async (tx) => await Message.queries.getMessagesForNode(tx, props.nodeId),
+    {
+      dependencies: [props.nodeId],
+    },
+  );
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex flex-col gap-2">
         <div className="text-lg font-bold">Messages</div>
-        <div className="flex flex-col gap-2">
-          <div className="text-sm">
-            <div className="font-bold">
-              <div className="inline-block w-4 h-4 rounded-full bg-green-500"></div>
-              <div className="inline-block w-4 h-4 rounded-full bg-red-500"></div>
-            </div>
-            <div className="text-xs">
-              <div className="font-bold">
-                <div className="inline-block w-4 h-4 rounded-full bg-green-500"></div>
-                <div className="inline-block w-4 h-4 rounded-full bg-red-500"></div>
-              </div>
-              <div className="text-xs">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                molestie, neque non scelerisque ultricies, nisl dolor aliquet
-                sapien, vel pulvinar nisi nisl eget nunc.
-              </div>
-            </div>
-          </div>
-          {/* TODO: Add more messages */}
-        </div>
+        {messages?.map((message) => (
+          <MessageInSidebar key={message.messageId} message={message} />
+        ))}
       </div>
+    </div>
+  );
+};
+
+const MessageInSidebar = (props: {
+  message: Awaited<ReturnType<typeof Message.queries.getMessagesForNode>>[0];
+}) => {
+  return (
+    <div className="flex flex-col gap-2 p-2">
+      <div className="text-sm font-bold">{props.message.message}</div>
+      <div className="text-sm">{props.message.direction}</div>
     </div>
   );
 };

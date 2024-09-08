@@ -53,8 +53,8 @@ export const query = <
   cb: Callback,
 ) => {
   const result = function (tx: ReadTransaction, input: z.input<typeof arg1>) {
-    const parsed = input.parse(input);
-    return cb.apply(cb, [tx, parsed]);
+    // const parsed = input.parse(input);
+    return cb.apply(cb, [tx, input]);
   };
 
   return result as Query<Arg1, Callback>;

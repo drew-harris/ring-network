@@ -85,7 +85,7 @@ export const Sidebar = (props: SidebarProps) => {
       <Separator className="mt-4" />
       <SidebarSendForm nodeId={data.nodeId} />
       <Separator className="mt-4" />
-      <SidebarMessageList />
+      <SidebarMessageList nodeId={data.nodeId} />
     </div>
   );
 };

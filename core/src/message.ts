@@ -25,8 +25,8 @@ export module Message {
         reciverId: z.string(),
         message: z.string(),
       }),
-      (tx, input) => {
-        return tx.set(input.messageId, {
+      async (tx, input) => {
+        return await tx.set(`messages/${input.messageId}`, {
           ...input,
           createdAt: new Date().toISOString(),
           direction: "left",
@@ -44,10 +44,11 @@ export module Message {
     getMessagesForNode: query(z.string(), async (tx, input) => {
       const messages = await tx
         .scan<Message.Info>({
-          prefix: `messages`,
+          prefix: `messages/`,
         })
         .values()
         .toArray();
+      console.log(messages);
       return messages.filter((message) => message.reciverId === input);
     }),
   };

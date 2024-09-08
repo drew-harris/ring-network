@@ -43,6 +43,7 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
       setError("Message cannot be empty");
     } else {
       if (targetNodeId !== null) {
+        console.log("SENDING MESSAGE");
         r.mutate.sendMessage({
           message,
           messageId: nanoid(6),
