@@ -15,7 +15,7 @@ export const SidebarShower = () => {
           initial={{ opacity: 0, x: 400 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 400 }}
-          className="flex relative flex-col m-5 w-64 bg-neutral-800/50 p-4 rounded-md border border-neutral-600"
+          className="flex relative flex-col m-5 w-[300px] bg-neutral-800/50 p-4 rounded-md border border-neutral-600"
         >
           {selectedNode && <Sidebar selectedNodeId={selectedNode} />}
           {!selectedNode && (
