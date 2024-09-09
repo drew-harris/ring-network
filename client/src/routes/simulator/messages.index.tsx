@@ -6,6 +6,7 @@ import { MessageTableActions } from "@/components/messages/MessageTableActions";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Message } from "core/message";
+import { Archive, Ban, Check } from "lucide-react";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useSubscribe } from "replicache-react";
 
@@ -70,19 +71,24 @@ function MessageTablePage() {
     title,
     data,
     selected,
+    icon,
     setSelected,
     allowArchive,
   }: {
     title: string;
+    icon?: React.ReactNode;
     data: MessageSubscribeData;
     selected: Record<string, boolean>;
     setSelected: Dispatch<SetStateAction<Record<string, boolean>>>;
     allowArchive?: boolean;
   }) => {
     return (
-      <div className="pt-4 max-w-7xl">
+      <div className="pt-4 m-auto max-w-7xl">
         <div className="flex w-full items-end justify-between pb-2">
-          <h1 className="block text-xl">{title}</h1>
+          <div className="flex gap-2 items-center">
+            {icon}
+            <h1 className="block text-xl">{title}</h1>
+          </div>
           {data.length > 0 && (
             <MessageTableActions
               allowArchive={allowArchive}
@@ -114,6 +120,7 @@ function MessageTablePage() {
     <div className="p-4">
       <PageSection
         title="Delivered"
+        icon={<Check className="text-neutral-300" size={20}></Check>}
         data={regular}
         selected={regularSelected}
         setSelected={setRegularSelected}
@@ -121,6 +128,7 @@ function MessageTablePage() {
       />
       <PageSection
         title="Undelivered"
+        icon={<Ban className="text-neutral-300" size={20}></Ban>}
         data={undelivered}
         selected={undeliveredSelected}
         setSelected={setUndeliveredSelected}
@@ -128,6 +136,7 @@ function MessageTablePage() {
       />
       <PageSection
         title="Archived"
+        icon={<Archive className="text-neutral-300" size={20}></Archive>}
         data={archive}
         selected={archivedSelected}
         setSelected={setArchivedSelected}

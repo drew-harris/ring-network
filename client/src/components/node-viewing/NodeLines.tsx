@@ -16,9 +16,9 @@ export const NodeLines = ({
   height: number;
   radius: number;
 }) => {
-  const nodeWidth = 48; // Assuming 48px width
+  const nodeWidth = 58; // Assuming 48px width
   const r = useContext(RealtimeClientContext);
-  const nodeHeight = 32; // Assuming 32px height
+  const nodeHeight = 42; // Assuming 32px height
 
   const totalNodeCount = useSubscribe(r, Node.queries.totalNodeCount, {
     default: 0,
