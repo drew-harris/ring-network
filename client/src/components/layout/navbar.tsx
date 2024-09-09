@@ -50,20 +50,20 @@ export const Navbar = () => {
           value={router.location.pathname}
         >
           <TabsList className="w-full h-auto p-0">
-            <TabsTrigger
-              className="grow"
-              onClick={() => navigate({ to: "/simulator" })}
-              value="/simulator"
-            >
-              Simulator
-            </TabsTrigger>
-            <TabsTrigger
-              className="grow"
-              onClick={() => navigate({ to: "/simulator/messages" })}
-              value="/simulator/messages"
-            >
-              Messages
-            </TabsTrigger>
+            <Link className="grow text-center" to="/simulator">
+              <TabsTrigger className="w-full" value="/simulator">
+                Simulator
+              </TabsTrigger>
+            </Link>
+            <Link className="grow text-center" to="/simulator/messages">
+              <TabsTrigger
+                className="w-full"
+                onClick={() => navigate({ to: "/simulator/messages" })}
+                value="/simulator/messages"
+              >
+                Messages
+              </TabsTrigger>
+            </Link>
           </TabsList>
         </Tabs>
       </div>

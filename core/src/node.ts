@@ -284,6 +284,7 @@ export module Node {
           break;
         }
         finalList.push(nextOne);
+        // @ts-ignore
         const possNext = await tx.get<Node.Info>(
           `nodes/${nextOne.leftNeighbor}`,
         );

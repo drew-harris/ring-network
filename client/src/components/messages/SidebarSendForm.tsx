@@ -20,7 +20,6 @@ interface SidebarSendFormProps {
 export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const [message, setMessage] = useState("");
   const [targetNodeId, setTargetNodeId] = useState<string | null>(null);
-  const [error, setError] = useState("");
 
   const r = useContext(RealtimeClientContext);
   const otherNodeIds = useSubscribe(
@@ -39,9 +38,7 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("RUNNIGN FORM");
-    if (message.length === 0) {
-      setError("Message cannot be empty");
-    } else {
+    if (message.length !== 0) {
       if (targetNodeId !== null) {
         console.log("SENDING MESSAGE");
         r.mutate.sendMessage({
@@ -51,7 +48,6 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
           senderId: nodeId,
         });
       }
-      setError("");
     }
 
     // Reset form

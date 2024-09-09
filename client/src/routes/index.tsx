@@ -3,7 +3,7 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   loader() {
     throw redirect({
-      to: "/login",
+      to: "/simulator",
     });
   },
   component: () => (
