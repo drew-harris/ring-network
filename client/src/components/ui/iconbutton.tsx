@@ -24,7 +24,7 @@ export const IconButton = ({
       <TooltipTrigger>
         <button
           className={cn(
-            `flex items-center justify-center w-10 h-10 rounded-md bg-neutral-600 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-500 ${
+            `flex items-center light:shadow-sm justify-center w-10 h-10 rounded-md bg-neutral-200/40 border-neutral-300 border dark:border-transparent hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-500 ${
               disabled ? "cursor-not-allowed opacity-50" : ""
             }`,
             className,

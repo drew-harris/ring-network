@@ -53,7 +53,7 @@ export const NodeLines = ({
           <g key={`${node.nodeId}-line-group`}>
             <motion.line
               key={`${node.nodeId}-line`}
-              stroke="#404040"
+              className="dark:stroke-neutral-700 stroke-neutral-400"
               strokeWidth="2"
               initial={{ pathLength: 0 }}
               animate={{
@@ -76,7 +76,7 @@ export const NodeLines = ({
               >
                 <motion.circle
                   r="10"
-                  fill="#404040"
+                  className="dark:fill-neutral-700 fill-neutral-400"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.1 }}

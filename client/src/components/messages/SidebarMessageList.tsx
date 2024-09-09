@@ -49,7 +49,7 @@ const MessageInSidebar = (props: {
   const [open, setOpen] = useState(false);
   const r = useContext(RealtimeClientContext);
   return (
-    <motion.div className="bg-neutral-800 rounded-md p-2 border border-neutral-600 gap-2">
+    <motion.div className="dark:bg-neutral-800 rounded-md p-2 border border-neutral-300 bg-neutral-100 dark:border-neutral-600 gap-2">
       <div
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between"

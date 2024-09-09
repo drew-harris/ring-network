@@ -11,12 +11,11 @@ export const Navbar = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <div className="flex border-b border-b-neutral-700 bg-neutral-800 py-2 px-8 items-center justify-between">
+      <div className="flex border-b-neutral-300 bg-neutral-200 border-b dark:border-b-neutral-700 dark:bg-neutral-800 py-2 px-8 items-center justify-between">
         <div>Ring Network Simulator</div>
-
         <Popover>
           <PopoverTrigger>
-            <div className="rounded-full grid place-items-center bg-neutral-500 w-8 h-8">
+            <div className="rounded-full grid place-items-center bg-neutral-200 border dark:border-transparent border-neutral-400 dark:bg-neutral-700 w-8 h-8">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -37,7 +36,7 @@ export const Navbar = () => {
             <div className="text-sm pb-2 text-center">harrisd@smu.edu</div>
             <Link
               to="/login"
-              className="text-sm block hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
+              className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
             >
               Log Out
             </Link>

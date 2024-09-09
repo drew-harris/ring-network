@@ -120,7 +120,12 @@ function MessageTablePage() {
     <div className="p-4">
       <PageSection
         title="Delivered"
-        icon={<Check className="text-neutral-300" size={20}></Check>}
+        icon={
+          <Check
+            className="text-neutral-800 dark:text-neutral-300"
+            size={20}
+          ></Check>
+        }
         data={regular}
         selected={regularSelected}
         setSelected={setRegularSelected}
@@ -128,7 +133,12 @@ function MessageTablePage() {
       />
       <PageSection
         title="Undelivered"
-        icon={<Ban className="text-neutral-300" size={20}></Ban>}
+        icon={
+          <Ban
+            className=" text-neutral-800 dark:text-neutral-300"
+            size={20}
+          ></Ban>
+        }
         data={undelivered}
         selected={undeliveredSelected}
         setSelected={setUndeliveredSelected}
@@ -136,7 +146,12 @@ function MessageTablePage() {
       />
       <PageSection
         title="Archived"
-        icon={<Archive className="text-neutral-300" size={20}></Archive>}
+        icon={
+          <Archive
+            className="text-neutral-800 dark:text-neutral-300"
+            size={20}
+          ></Archive>
+        }
         data={archive}
         selected={archivedSelected}
         setSelected={setArchivedSelected}

@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Tabs } from "@/components/ui/tabs";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -15,6 +14,7 @@ function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState<"admin" | "operator">("admin");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   return (
@@ -22,12 +22,36 @@ function Register() {
       <div className="absolute hover:underline top-4 right-6">
         <Link to="/login">Login</Link>
       </div>
-      <div className="bg-neutral-800 min-w-60 border border-neutral-700 rounded-md p-4 flex gap-1 flex-col">
+      <div className="dark:bg-neutral-800 light:shadow-md bg-white min-w-60 border dark:border-neutral-700 border-neutral-300 rounded-md p-4 flex gap-1 flex-col">
         <div className="text-xl font-medium">Register</div>
         <div className="opacity-80 text-sm">
           Register with your email and password.
         </div>
         <form className="flex flex-col py-2 gap-2">
+          <Tabs
+            onValueChange={(value) =>
+              setUserType(value as "operator" | "admin")
+            }
+            className=""
+            value={userType}
+          >
+            <TabsList className="w-full h-auto p-0">
+              <TabsTrigger
+                className="grow"
+                onChange={() => setUserType("operator")}
+                value="operator"
+              >
+                Operator
+              </TabsTrigger>
+              <TabsTrigger
+                value="admin"
+                className="grow"
+                onChange={() => setUserType("admin")}
+              >
+                Admin
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
           <Input
             type="email"
             placeholder="Email"

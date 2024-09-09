@@ -15,7 +15,7 @@ export const SidebarShower = () => {
           initial={{ opacity: 0, x: 400 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 400 }}
-          className="flex relative flex-col m-5 w-[300px] bg-neutral-800/50 p-4 rounded-md border border-neutral-600"
+          className="flex relative light:shadow-md flex-col m-5 w-[300px] dark:bg-neutral-800/50 bg-white p-4 rounded-md border border-neutral-200 dark:border-neutral-600"
         >
           {selectedNode && <Sidebar selectedNodeId={selectedNode} />}
           {!selectedNode && (
@@ -28,7 +28,7 @@ export const SidebarShower = () => {
               clearSelectedNode();
               setShowSidebar(false);
             }}
-            className="absolute top-0 right-0 p-2 rounded-md hover:bg-neutral-700/50 cursor-pointer"
+            className="absolute top-0 right-0 p-2 rounded-md dark:hover:bg-neutral-700/50 hover:bg-neutral-200 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

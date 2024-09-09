@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
 import { Node } from "core/node";
 import { cn } from "@/lib/utils";
-import { useContext, useState } from "react";
-import { RealtimeClientContext } from "@/main";
-import { createPortal } from "react-dom";
 import { useSelectedNode } from "@/stores/selectedNode";
 
 interface NodeItemProps {
@@ -48,9 +45,9 @@ export const NodeItem = ({
           setSelectedNode(node.nodeId);
         }}
         className={cn(
-          "p-3 text-xl bg-neutral-700 rounded-md border border-neutral-600 min-w-12 text-center",
+          "p-3 text-black dark:text-white text-xl light:shadow bg-neutral-200 dark:bg-neutral-700 rounded-md border border-neutral-400 dark:border-neutral-600 min-w-12 text-center",
           selectedNode == node.nodeId &&
-            "outline outline-2 outline-primary-500",
+            "outline outline-2 outline-neutral-400 dark:outline-neutral-200",
           node.status == "inactive" && "opacity-50",
         )}
       >

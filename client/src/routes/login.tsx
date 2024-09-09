@@ -25,7 +25,7 @@ function LoginPage() {
       <div className="absolute hover:underline top-4 right-6">
         <Link to="/register">Register</Link>
       </div>
-      <div className="bg-neutral-800 min-w-60 border border-neutral-700 rounded-md p-4 flex gap-1 flex-col">
+      <div className="dark:bg-neutral-800 light:shadow-md min-w-60 bg-white border dark:border-neutral-700  border-neutral-300 rounded-md p-4 flex gap-1 flex-col">
         <div className="text-xl font-medium">Log In</div>
         <div className="opacity-80 text-sm">
           Log in with your email and password.
