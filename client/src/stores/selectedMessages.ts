@@ -4,6 +4,8 @@ import { create } from "zustand";
 interface SelectedMessages {
   selectedMessages: Record<string, boolean>;
   setSelectedMessages: (messages: Updater<Record<string, boolean>>) => void;
+
+  clearAllSelectedMessages: () => void;
 }
 
 export const useSelectedMessages = create<SelectedMessages>((set, get) => ({
@@ -15,5 +17,9 @@ export const useSelectedMessages = create<SelectedMessages>((set, get) => ({
     }
     const curMessages = get().selectedMessages;
     set({ selectedMessages: messages(curMessages) });
+  },
+
+  clearAllSelectedMessages: () => {
+    set({ selectedMessages: {} });
   },
 }));

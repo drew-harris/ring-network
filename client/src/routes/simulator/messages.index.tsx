@@ -1,4 +1,5 @@
 import { MessageTable } from "@/components/messages/MessageTable";
+import { MessageTableActions } from "@/components/messages/MessageTableActions";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Message } from "core/message";
@@ -22,7 +23,10 @@ function MessageTablePage() {
 
   return (
     <div className="p-4">
-      <h1>Messages</h1>
+      <div className="flex w-full items-end justify-between pb-2">
+        <h1 className="block text-xl">Messages</h1>
+        <MessageTableActions />
+      </div>
       <div className="max-w-7xl">
         <MessageTable data={data} />
       </div>

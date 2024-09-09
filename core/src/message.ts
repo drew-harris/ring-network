@@ -11,7 +11,7 @@ export module Message {
     receivedAt: z.string(),
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
-    // TODO: Add status
+    status: z.enum(["Created", "Delivered"]), // TODO: Update
   });
 
   export type Info = z.infer<typeof Info>;
@@ -32,11 +32,17 @@ export module Message {
           direction: "left",
           path: [input.senderId, input.reciverId],
           receivedAt: new Date().toISOString(),
+          status: "Delivered",
         } satisfies Info);
       },
     )
     .register("deleteMessage", z.string(), async (tx, input) => {
       return await tx.del(`messages/${input}`);
+    })
+    .register("bulkDeleteMessages", z.array(z.string()), async (tx, input) => {
+      for (const messageId of input) {
+        await tx.del(`messages/${messageId}`);
+      }
     });
 
   export const queries = {
