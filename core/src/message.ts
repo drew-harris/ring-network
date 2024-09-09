@@ -50,5 +50,15 @@ export module Message {
         .toArray();
       return messages.filter((message) => message.reciverId === input);
     }),
+
+    getAllMessages: query(z.void(), async (tx) => {
+      const messages = await tx
+        .scan<Message.Info>({
+          prefix: `messages/`,
+        })
+        .values()
+        .toArray();
+      return messages;
+    }),
   };
 }

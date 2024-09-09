@@ -23,7 +23,7 @@ const rep = new Replicache({
     .extend(Message.mutations)
     .build(),
   name: "simulator",
-  pullURL: "http://localhost:3000/pull",
+  pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
 });
 
 export type RealtimeClient = typeof rep;

@@ -33,6 +33,11 @@ export const SidebarMessageList = (props: SidebarMessageListProps) => {
         {messages?.map((message) => (
           <MessageInSidebar key={message.messageId} message={message} />
         ))}
+        {messages && messages.length === 0 && (
+          <div className="text-sm text-center pt-2 text-neutral-500">
+            No messages
+          </div>
+        )}
       </div>
     </div>
   );
