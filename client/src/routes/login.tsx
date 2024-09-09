@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormEventHandler, useState } from "react";
 
 export const Route = createFileRoute("/login")({
@@ -22,9 +22,9 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen background flex flex-col p-12 items-center justify-center">
-      <div className="absolute hover:underline top-4 right-6">
-        <Link to="/register">Register</Link>
-      </div>
+      {/* <div className="absolute hover:underline top-4 right-6"> */}
+      {/*   <Link to="/register">Register</Link> */}
+      {/* </div> */}
       <div className="dark:bg-neutral-800 light:shadow-md min-w-60 bg-white border dark:border-neutral-700  border-neutral-300 rounded-md p-4 flex gap-1 flex-col">
         <div className="text-xl font-medium">Log In</div>
         <div className="opacity-80 text-sm">

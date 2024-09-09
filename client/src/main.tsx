@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { PullerResult, Replicache } from "replicache";
 import { Node } from "core/node";
 import { Message } from "core/message";
+import { User } from "core/user";
 import { Mutations } from "core/utils";
 import "./index.css";
 
@@ -21,6 +22,7 @@ const rep = new Replicache({
   mutators: new Mutations()
     .extend(Node.mutations)
     .extend(Message.mutations)
+    .extend(User.mutations)
     .build(),
   name: "simulator",
   puller: async () => {

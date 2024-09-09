@@ -20,6 +20,7 @@ interface SidebarSendFormProps {
 export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const [message, setMessage] = useState("");
   const [targetNodeId, setTargetNodeId] = useState<string | null>(null);
+  const [direction, setDirection] = useState<"left" | "right">("left");
 
   const r = useContext(RealtimeClientContext);
   const otherNodeIds = useSubscribe(
@@ -85,6 +86,18 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
               {nodeId}
             </SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+      <Select
+        onValueChange={(value) => setDirection(value as "left" | "right")}
+        value={direction}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select Direction" />
+        </SelectTrigger>
+        <SelectContent onMouseLeave={() => setHoverNode(null)}>
+          <SelectItem value="left">Left</SelectItem>
+          <SelectItem value="right">Right</SelectItem>
         </SelectContent>
       </Select>
       <Button

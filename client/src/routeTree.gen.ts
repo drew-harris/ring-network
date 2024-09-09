@@ -16,6 +16,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as SimulatorIndexImport } from './routes/simulator/index'
+import { Route as AdminIndexImport } from './routes/admin.index'
 import { Route as SimulatorMessagesIndexImport } from './routes/simulator/messages.index'
 
 // Create/Update Routes
@@ -43,6 +44,11 @@ const IndexRoute = IndexImport.update({
 const SimulatorIndexRoute = SimulatorIndexImport.update({
   path: '/',
   getParentRoute: () => SimulatorRoute,
+} as any)
+
+const AdminIndexRoute = AdminIndexImport.update({
+  path: '/admin/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const SimulatorMessagesIndexRoute = SimulatorMessagesIndexImport.update({
@@ -82,6 +88,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SimulatorImport
       parentRoute: typeof rootRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/simulator/': {
       id: '/simulator/'
       path: '/'
@@ -109,6 +122,7 @@ export const routeTree = rootRoute.addChildren({
     SimulatorIndexRoute,
     SimulatorMessagesIndexRoute,
   }),
+  AdminIndexRoute,
 })
 
 /* prettier-ignore-end */
@@ -122,7 +136,8 @@ export const routeTree = rootRoute.addChildren({
         "/",
         "/login",
         "/register",
-        "/simulator"
+        "/simulator",
+        "/admin/"
       ]
     },
     "/": {
@@ -140,6 +155,9 @@ export const routeTree = rootRoute.addChildren({
         "/simulator/",
         "/simulator/messages/"
       ]
+    },
+    "/admin/": {
+      "filePath": "admin.index.tsx"
     },
     "/simulator/": {
       "filePath": "simulator/index.tsx",
