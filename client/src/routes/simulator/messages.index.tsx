@@ -23,10 +23,9 @@ function MessageTablePage() {
   return (
     <div className="p-4">
       <h1>Messages</h1>
-      <div>
+      <div className="max-w-7xl">
         <MessageTable data={data} />
       </div>
     </div>
   );
 }
-

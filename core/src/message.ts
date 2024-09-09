@@ -30,7 +30,7 @@ export module Message {
           ...input,
           createdAt: new Date().toISOString(),
           direction: "left",
-          path: [],
+          path: [input.senderId, input.reciverId],
           receivedAt: new Date().toISOString(),
         } satisfies Info);
       },
