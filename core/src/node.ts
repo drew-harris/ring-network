@@ -252,7 +252,7 @@ export module Node {
 
   export const transformNodeToOp = (node: Info) => {
     return {
-      op: "put",
+      op: "put" as const,
       key: `nodes/${node.nodeId}`,
       value: node,
     };

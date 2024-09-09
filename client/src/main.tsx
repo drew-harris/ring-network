@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Replicache } from "replicache";
+import { PullerResult, Replicache } from "replicache";
 import { Node } from "core/node";
 import { Message } from "core/message";
 import { Mutations } from "core/utils";
@@ -23,6 +23,22 @@ const rep = new Replicache({
     .extend(Message.mutations)
     .build(),
   name: "simulator",
+  puller: async () => {
+    return {
+      httpRequestInfo: {
+        errorMessage: "",
+        httpStatusCode: 200,
+      },
+      response: {
+        lastMutationIDChanges: {},
+        cookie: 42,
+        patch: [
+          { op: "clear" },
+          ...Node.getInitialState().map((n) => Node.transformNodeToOp(n)),
+        ],
+      },
+    } satisfies PullerResult;
+  },
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
 });
 
