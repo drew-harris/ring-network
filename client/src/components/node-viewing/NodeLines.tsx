@@ -1,7 +1,6 @@
 import { RealtimeClientContext } from "@/main";
 import { Node } from "core/node";
 import { motion } from "framer-motion";
-import { nanoid } from "nanoid";
 import { useContext } from "react";
 import { useSubscribe } from "replicache-react";
 
@@ -42,10 +41,11 @@ export const NodeLines = ({
         const midX = (x + nextX) / 2;
         const midY = (y + nextY) / 2;
 
-        const createNode = () => {
+        const createNode = async () => {
+          const newName = await r.query(Node.queries.getNewNodeName);
           r.mutate.insertNode({
             after: node.nodeId,
-            nodeId: nanoid(4).toUpperCase(),
+            nodeId: newName,
           });
         };
 

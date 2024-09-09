@@ -88,7 +88,7 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
         </SelectContent>
       </Select>
       <Button
-        variant="outline"
+        variant="default"
         className="w-full"
         disabled={message.length === 0 || targetNodeId === null}
         type="submit"

@@ -312,5 +312,23 @@ export module Node {
 
       return nodes.length;
     },
+
+    getNewNodeName: async (tx: ReadTransaction) => {
+      const nodes = await tx
+        .scan<Node.Info>({
+          prefix: "nodes",
+        })
+        .values()
+        .toArray();
+
+      let i = 1;
+      while (true) {
+        const name = `N-${i}`;
+        if (!nodes.find((node) => node.nodeId === name)) {
+          return name;
+        }
+        i++;
+      }
+    },
   };
 }
