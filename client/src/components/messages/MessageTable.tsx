@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSelectedMessages } from "@/stores/selectedMessages";
 import {
   createColumnHelper,
   flexRender,
@@ -18,13 +17,16 @@ import {
 
 import { Message } from "core/message";
 import { ChevronDown } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
-type MessageSubscribeData = Awaited<
+export type MessageSubscribeData = Awaited<
   ReturnType<typeof Message.queries.getAllMessages>
 >;
 
 interface MessageTableProps {
   data: MessageSubscribeData;
+  selected: Record<string, boolean>;
+  setSelected: Dispatch<SetStateAction<Record<string, boolean>>>;
 }
 
 const columnHelper = createColumnHelper<MessageSubscribeData[0]>();
@@ -64,10 +66,11 @@ const defaultColumns = [
 
 export type RowSelectionState = Record<string, boolean>;
 
-export const MessageTable = ({ data }: MessageTableProps) => {
-  const { selectedMessages, setSelectedMessages } = useSelectedMessages(
-    (s) => s,
-  );
+export const MessageTable = ({
+  data,
+  selected,
+  setSelected,
+}: MessageTableProps) => {
   const table = useReactTable({
     data,
     columns: defaultColumns,
@@ -79,10 +82,10 @@ export const MessageTable = ({ data }: MessageTableProps) => {
     enableRowSelection: true,
     enableMultiRowSelection: true,
     state: {
-      rowSelection: selectedMessages,
+      rowSelection: selected,
     },
     onRowSelectionChange: (s) => {
-      setSelectedMessages(s);
+      setSelected(s);
     },
     initialState: {
       sorting: [{ id: "createdAt", desc: true }],

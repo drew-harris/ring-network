@@ -1,5 +1,8 @@
 import { Mutations, query } from "./utils";
+import { Node } from "./node";
 import { z } from "./zod";
+
+const placementSchema = z.enum(["node", "archive", "undelivered"]);
 
 export module Message {
   export const Info = z.object({
@@ -11,7 +14,8 @@ export module Message {
     receivedAt: z.string(),
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
-    status: z.enum(["Created", "Delivered"]), // TODO: Update
+    status: z.enum(["Created", "Delivered", "Undelivered"]), // TODO: Update
+    placement: placementSchema,
   });
 
   export type Info = z.infer<typeof Info>;
@@ -26,6 +30,21 @@ export module Message {
         message: z.string(),
       }),
       async (tx, input) => {
+        // Check to see if the reciver is online and active
+        const reciverNode = await tx.get<Node.Info>(`nodes/${input.reciverId}`);
+
+        if (!reciverNode || reciverNode.status === "inactive") {
+          return await tx.set(`messages/${input.messageId}`, {
+            ...input,
+            createdAt: new Date().toISOString(),
+            direction: "left",
+            path: [input.senderId, input.reciverId],
+            receivedAt: new Date().toISOString(),
+            status: "Undelivered",
+            placement: "undelivered",
+          } satisfies Info);
+        }
+
         return await tx.set(`messages/${input.messageId}`, {
           ...input,
           createdAt: new Date().toISOString(),
@@ -33,6 +52,7 @@ export module Message {
           path: [input.senderId, input.reciverId],
           receivedAt: new Date().toISOString(),
           status: "Delivered",
+          placement: "node",
         } satisfies Info);
       },
     )
@@ -42,6 +62,17 @@ export module Message {
     .register("bulkDeleteMessages", z.array(z.string()), async (tx, input) => {
       for (const messageId of input) {
         await tx.del(`messages/${messageId}`);
+      }
+    })
+    .register("archiveMessages", z.array(z.string()), async (tx, input) => {
+      for (const messageId of input) {
+        const currentMessage = await tx.get<Message.Info>(
+          `messages/${messageId}`,
+        );
+        await tx.set(`messages/${messageId}`, {
+          ...currentMessage,
+          placement: "archive",
+        });
       }
     });
 
@@ -57,14 +88,14 @@ export module Message {
       return messages.filter((message) => message.reciverId === input);
     }),
 
-    getAllMessages: query(z.void(), async (tx) => {
+    getAllMessages: query(placementSchema, async (tx, input) => {
       const messages = await tx
         .scan<Message.Info>({
           prefix: `messages/`,
         })
         .values()
         .toArray();
-      return messages;
+      return messages.filter((message) => message.placement === input);
     }),
   };
 }
