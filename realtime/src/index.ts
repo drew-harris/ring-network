@@ -28,6 +28,7 @@ app.get(
       onOpen(evt, ws) {
         console.log("open");
         listeners.push(ws);
+        ws.send("hello");
       },
       onClose(evt, ws) {
         console.log("close");
@@ -38,11 +39,9 @@ app.get(
 );
 
 const doPoke = async () => {
-  const ws = listeners[0];
-  if (!ws) {
-    return;
-  }
-  ws.send("poke");
+  listeners.forEach((l) => {
+    l.send("poke");
+  });
 };
 
 app.use(cors());

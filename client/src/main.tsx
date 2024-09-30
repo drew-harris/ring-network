@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { PullerResult, Replicache } from "replicache";
+import { Replicache } from "replicache";
 import { Node } from "core/node";
 import { Message } from "core/message";
 import { User } from "core/user";
@@ -27,6 +27,18 @@ const rep = new Replicache({
   name: "simulator",
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
   pushURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/push`,
+});
+
+const websocket = new WebSocket(
+  `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/poke`,
+);
+
+websocket.addEventListener("open", () => {
+  console.log("connection established");
+  websocket.addEventListener("message", (event) => {
+    console.log("WS MESSAGE", event.data);
+    rep.pull({ now: true });
+  });
 });
 
 export type RealtimeClient = typeof rep;
