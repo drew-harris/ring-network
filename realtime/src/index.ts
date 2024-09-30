@@ -12,8 +12,38 @@ import {
 } from "./sync-utils";
 import { PullRequestV1, PullResponseV1, PushRequestV1 } from "replicache";
 import { getChangedNodes } from "./logic/node/getChanged";
+import { createNodeWebSocket } from "@hono/node-ws";
+import { WSContext } from "hono/ws";
 
 const app = new Hono();
+
+let listeners: WSContext[] = [];
+
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
+
+app.get(
+  "/poke",
+  upgradeWebSocket((c) => {
+    return {
+      onOpen(evt, ws) {
+        console.log("open");
+        listeners.push(ws);
+      },
+      onClose(evt, ws) {
+        console.log("close");
+        listeners = listeners.filter((l) => l !== ws);
+      },
+    };
+  }),
+);
+
+const doPoke = async () => {
+  const ws = listeners[0];
+  if (!ws) {
+    return;
+  }
+  ws.send("poke");
+};
 
 app.use(cors());
 
@@ -72,6 +102,7 @@ app.post("/push", async (c) => {
         });
       }
     }
+    doPoke();
     return c.json({});
   } catch {
     c.status(500);
@@ -95,7 +126,9 @@ app.onError((err, c) => {
   return c.json({ error: "Internal server error" });
 });
 
-serve({
+const server = serve({
   fetch: app.fetch,
   port,
 });
+
+injectWebSocket(server);
