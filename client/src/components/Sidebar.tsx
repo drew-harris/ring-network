@@ -36,18 +36,20 @@ export const Sidebar = (props: SidebarProps) => {
     <div>
       <div className="text-lg font-bold">{data.label}</div>
       <div className="flex gap-2 w-full">
-        <IconButton
-          disabled={totalNodeCount <= 3}
-          label="Delete"
-          onClick={() => {
-            // Unselect the node
-            // sel.clearSelectedNode();
-            sel.setSelectedNode(data.leftNeighbor);
-            r.mutate.deleteNode(props.selectedNodeId);
-          }}
-        >
-          <Trash size={14} />
-        </IconButton>
+        {data.label !== "N-1" && (
+          <IconButton
+            disabled={totalNodeCount <= 3}
+            label="Delete"
+            onClick={() => {
+              // Unselect the node
+              // sel.clearSelectedNode();
+              sel.setSelectedNode(data.leftNeighbor);
+              r.mutate.deleteNode(props.selectedNodeId);
+            }}
+          >
+            <Trash size={14} />
+          </IconButton>
+        )}
         <IconButton
           label="Toggle Active"
           onClick={() => {

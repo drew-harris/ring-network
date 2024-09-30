@@ -10,7 +10,7 @@ export type Transaction = PostgresJsTransaction<
 >;
 
 const queryClient = postgres(process.env.DATABASE_URL!);
-const db = drizzle(queryClient, { logger: true });
+const db = drizzle(queryClient, { logger: false });
 
 type TxOrDb = Transaction | typeof queryClient;
 

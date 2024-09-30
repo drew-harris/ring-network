@@ -10,12 +10,23 @@ import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
+import { nanoid } from "nanoid";
 
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
+
+const getOrCreateName = () => {
+  const name = localStorage.getItem("name");
+  if (name) {
+    return name;
+  }
+  const newName = nanoid(8);
+  localStorage.setItem("name", newName);
+  return newName;
+};
 
 const rep = new Replicache({
   licenseKey: import.meta.env.VITE_PUBLIC_REPLICACHE_LICENSE_KEY as string,
@@ -24,7 +35,7 @@ const rep = new Replicache({
     .extend(Message.mutations)
     .extend(User.mutations)
     .build(),
-  name: "simulator",
+  name: getOrCreateName(),
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
   pushURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/push`,
 });
