@@ -25,23 +25,8 @@ const rep = new Replicache({
     .extend(User.mutations)
     .build(),
   name: "simulator",
-  puller: async () => {
-    return {
-      httpRequestInfo: {
-        errorMessage: "",
-        httpStatusCode: 200,
-      },
-      response: {
-        lastMutationIDChanges: {},
-        cookie: 42,
-        patch: [
-          { op: "clear" },
-          ...Node.getInitialState().map((n) => Node.transformNodeToOp(n)),
-        ],
-      },
-    } satisfies PullerResult;
-  },
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
+  pushURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/push`,
 });
 
 export type RealtimeClient = typeof rep;

@@ -6,9 +6,11 @@
   "dependencies": {
     "@hono/node-server": "^1.12.2",
     "core": "workspace:",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
     "hono": "^4.5.9",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "replicache": "^15.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
