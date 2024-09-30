@@ -14,7 +14,7 @@ import { RealtimeClientContext } from "@/main";
 import { User } from "core/user";
 import { useSubscribe } from "replicache-react";
 import { IconButton } from "@/components/ui/iconbutton";
-import { Trash } from "lucide-react";
+import { ChevronLeft, Trash } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminPage,
@@ -53,8 +53,11 @@ function AdminPage() {
   };
 
   return (
-    <div className="p-4">
-      <Link to="/simulator">Back to simulator</Link>
+    <div className="p-4 mx-auto max-w-4xl">
+      <Link className="flex gap-2 mb-4" to="/simulator">
+        <ChevronLeft />
+        Back to simulator
+      </Link>
       <h1 className="text-2xl font-bold mb-4">Create New User</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

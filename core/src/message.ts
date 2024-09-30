@@ -15,6 +15,7 @@ export module Message {
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
     status: z.enum(["Created", "Delivered", "Undelivered"]), // TODO: Update
+    seen: z.boolean(),
     placement: placementSchema,
   });
 
@@ -42,6 +43,7 @@ export module Message {
             receivedAt: new Date().toISOString(),
             status: "Undelivered",
             placement: "undelivered",
+            seen: false,
           } satisfies Info);
         }
 
@@ -53,6 +55,7 @@ export module Message {
           receivedAt: new Date().toISOString(),
           status: "Delivered",
           placement: "node",
+          seen: false,
         } satisfies Info);
       },
     )
@@ -74,6 +77,13 @@ export module Message {
           placement: "archive",
         });
       }
+    })
+    .register("markMessageAsSeen", z.string(), async (tx, input) => {
+      const currentMessage = await tx.get<Message.Info>(`messages/${input}`);
+      await tx.set(`messages/${input}`, {
+        ...currentMessage,
+        seen: true,
+      });
     });
 
   export const queries = {
