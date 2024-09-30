@@ -23,12 +23,12 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const [direction, setDirection] = useState<"left" | "right">("left");
 
   const r = useContext(RealtimeClientContext);
-  const otherNodeIds = useSubscribe(
+  const otherNodes = useSubscribe(
     r,
     async (tx) => {
-      return (await Node.queries.getAllNodes(tx))
-        .filter((node) => node.nodeId !== nodeId)
-        .map((node) => node.nodeId);
+      return (await Node.queries.getAllNodes(tx)).filter(
+        (node) => node.nodeId !== nodeId,
+      );
     },
     {
       default: [],
@@ -76,14 +76,14 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
           <SelectValue placeholder="Select Target Node" />
         </SelectTrigger>
         <SelectContent onMouseLeave={() => setHoverNode(null)}>
-          {otherNodeIds.map((nodeId) => (
+          {otherNodes.map((node) => (
             <SelectItem
-              onMouseEnter={() => setHoverNode(nodeId)}
+              onMouseEnter={() => setHoverNode(node.nodeId)}
               onMouseDown={() => setHoverNode(null)}
-              value={nodeId}
-              key={nodeId}
+              value={node.nodeId}
+              key={node.nodeId}
             >
-              {nodeId}
+              {node.label}
             </SelectItem>
           ))}
         </SelectContent>

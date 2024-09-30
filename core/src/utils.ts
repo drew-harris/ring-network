@@ -14,7 +14,7 @@ export function fn<
   return result;
 }
 
-type Mutator<
+export type Mutator<
   Arg1 extends ZodSchema,
   Callback extends (tx: WriteTransaction, arg1: z.output<Arg1>) => any,
 > = (tx: WriteTransaction, arg1: z.input<Arg1>) => ReturnType<Callback>;
@@ -61,7 +61,9 @@ export const query = <
 };
 
 export class Mutations<Mutators> {
-  private mutations = new Map<string, Mutator<any, any>>();
+  public mutations = {} as {
+    [name in keyof Mutators]: Mutators[name];
+  };
 
   public register<
     Name extends string,
@@ -72,7 +74,7 @@ export class Mutations<Mutators> {
     arg1: Arg1,
     cb: Callback,
   ): Mutations<Mutators & { [name in Name]: Mutator<Arg1, Callback> }> {
-    this.mutations.set(name, mutation(arg1, cb));
+    this.mutations[name as string] = mutation(arg1, cb);
     return this as Mutations<
       Mutators & { [name in Name]: Mutator<Arg1, Callback> }
     >;
@@ -81,16 +83,17 @@ export class Mutations<Mutators> {
   public build(): {
     [name in keyof Mutators]: Mutators[name];
   } {
-    return Object.fromEntries(this.mutations.entries()) as any;
+    return this.mutations as any;
   }
 
   // Merge two mutations classes together
   public extend<OtherMutators extends Record<string, Mutator<any, any>>>(
     other: Mutations<OtherMutators>,
   ): Mutations<Mutators & OtherMutators> {
-    for (const [name, mutator] of other.mutations.entries()) {
-      this.mutations.set(name, mutator);
-    }
+    this.mutations = {
+      ...this.mutations,
+      ...other.mutations,
+    };
     return this as Mutations<Mutators & OtherMutators>;
   }
 }

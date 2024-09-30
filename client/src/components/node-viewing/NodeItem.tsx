@@ -51,7 +51,7 @@ export const NodeItem = ({
           node.status == "inactive" && "opacity-50",
         )}
       >
-        <div>{node.nodeId}</div>
+        <div>{node.label}</div>
       </div>
     </motion.div>
   );

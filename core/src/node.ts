@@ -3,6 +3,7 @@ import { Mutations } from "./utils";
 import { ReadTransaction, WriteTransaction } from "replicache";
 export module Node {
   export const Info = z.object({
+    label: z.string(),
     nodeId: z.string(),
     leftNeighbor: z.string(),
     rightNeighbor: z.string(),
@@ -25,6 +26,7 @@ export module Node {
       "insertNode",
       z.object({
         nodeId: z.string(),
+        label: z.string(),
         after: z.string(), // The node id it comes after
       }),
       async (tx, input) => {
@@ -53,9 +55,10 @@ export module Node {
         await tx.set(`nodes/${nodeId}`, {
           leftNeighbor: left.nodeId,
           nodeId,
+          label: input.label,
           rightNeighbor: left.rightNeighbor,
           status: "active",
-        });
+        } satisfies Info);
 
         // Rewrite the left node
         await tx.set(`nodes/${left.nodeId}`, {
@@ -190,60 +193,70 @@ export module Node {
       {
         leftNeighbor: "N-10",
         nodeId: "N-1",
+        label: "N-1",
         rightNeighbor: "N-2",
         status: "active",
       },
       {
         leftNeighbor: "N-1",
         nodeId: "N-2",
+        label: "N-2",
         rightNeighbor: "N-3",
         status: "active",
       },
       {
         leftNeighbor: "N-2",
         nodeId: "N-3",
+        label: "N-3",
         rightNeighbor: "N-4",
         status: "active",
       },
       {
         leftNeighbor: "N-3",
         nodeId: "N-4",
+        label: "N-4",
         rightNeighbor: "N-5",
         status: "active",
       },
       {
         leftNeighbor: "N-5",
         nodeId: "N-6",
+        label: "N-6",
         rightNeighbor: "N-7",
         status: "active",
       },
       {
         leftNeighbor: "N-4",
         nodeId: "N-5",
+        label: "N-5",
         rightNeighbor: "N-6",
         status: "active",
       },
       {
         leftNeighbor: "N-6",
         nodeId: "N-7",
+        label: "N-7",
         rightNeighbor: "N-8",
         status: "active",
       },
       {
         leftNeighbor: "N-7",
         nodeId: "N-8",
+        label: "N-8",
         rightNeighbor: "N-9",
         status: "active",
       },
       {
         leftNeighbor: "N-8",
         nodeId: "N-9",
+        label: "N-9",
         rightNeighbor: "N-10",
         status: "active",
       },
       {
         leftNeighbor: "N-9",
         nodeId: "N-10",
+        label: "N-10",
         rightNeighbor: "N-1",
         status: "active",
       },
@@ -268,7 +281,7 @@ export module Node {
         .toArray();
 
       // Order nodes by leftNeighbor
-      const first = nodes.find((node) => node.nodeId === "N-1");
+      const first = nodes.find((node) => node.label === "N-1");
 
       if (!first) {
         return [];
@@ -324,7 +337,7 @@ export module Node {
       let i = 1;
       while (true) {
         const name = `N-${i}`;
-        if (!nodes.find((node) => node.nodeId === name)) {
+        if (!nodes.find((node) => node.label === name)) {
           return name;
         }
         i++;
