@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "start": "turbo start --filter=\"./realtime/\""
+    "start": "turbo start --filter=\"./realtime/\" --env-mode=loose"
   },
   "keywords": [],
   "author": "",
