@@ -25,7 +25,7 @@ jobs:
           tags: ${{secrets.DOCKERHUB_USERNAME}}/ring-server:latest
 
   notify-watchtower:
-    needs: [build-website, build-worker]
+    needs: [build-realtime-server]
     runs-on: ubuntu-latest
     steps:
       - name: Notify
