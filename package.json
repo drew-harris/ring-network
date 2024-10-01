@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build"
+    "build": "turbo build",
+    "start": "turbo start --filter=\"./realtime/\""
   },
   "keywords": [],
   "author": "",
