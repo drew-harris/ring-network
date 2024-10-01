@@ -116,7 +116,7 @@ const MessageInSidebar = (props: {
                 Sent At: {new Date(props.message.createdAt).toLocaleString()}
               </div>
               <div>Direction: {props.message.direction}</div>
-              <div>ID: {props.message.messageId}</div>
+              <div>ID: {props.message.label}</div>
             </div>
             <div className="flex absolute bottom-0 right-0">
               <IconButton

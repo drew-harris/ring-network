@@ -9,6 +9,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { RealtimeClientContext } from "@/main";
 import { useSelectedNode } from "@/stores/selectedNode";
+import { Message } from "core/message";
 import { Node } from "core/node";
 import { nanoid } from "nanoid";
 import { useContext, useState } from "react";
@@ -43,6 +44,9 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
       if (targetNodeId !== null) {
         console.log("SENDING MESSAGE");
         r.mutate.sendMessage({
+          label: Message.generateMessageId(),
+          createdAt: new Date().toISOString(),
+          receivedAt: new Date().toISOString(),
           message,
           messageId: nanoid(6),
           reciverId: targetNodeId,

@@ -47,6 +47,7 @@ function AdminPage() {
     setPassword("");
 
     r.mutate.insertUser({
+      id: User.createId(),
       name: username,
       email,
     });

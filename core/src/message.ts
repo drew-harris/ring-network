@@ -7,6 +7,7 @@ const placementSchema = z.enum(["node", "archive", "undelivered"]);
 export module Message {
   export const Info = z.object({
     messageId: z.string(),
+    label: z.string(),
     senderId: z.string(),
     reciverId: z.string(),
     message: z.string(),
@@ -26,6 +27,9 @@ export module Message {
       "sendMessage",
       z.object({
         messageId: z.string(),
+        createdAt: z.string(),
+        receivedAt: z.string(),
+        label: z.string(),
         senderId: z.string(),
         reciverId: z.string(),
         message: z.string(),
@@ -37,10 +41,8 @@ export module Message {
         if (!reciverNode || reciverNode.status === "inactive") {
           return await tx.set(`messages/${input.messageId}`, {
             ...input,
-            createdAt: new Date().toISOString(),
             direction: "left",
             path: [input.senderId, input.reciverId],
-            receivedAt: new Date().toISOString(),
             status: "Undelivered",
             placement: "undelivered",
             seen: false,
@@ -49,10 +51,8 @@ export module Message {
 
         return await tx.set(`messages/${input.messageId}`, {
           ...input,
-          createdAt: new Date().toISOString(),
           direction: "left",
           path: [input.senderId, input.reciverId],
-          receivedAt: new Date().toISOString(),
           status: "Delivered",
           placement: "node",
           seen: false,
@@ -107,5 +107,11 @@ export module Message {
         .toArray();
       return messages.filter((message) => message.placement === input);
     }),
+  };
+
+  export const generateMessageId = () => {
+    // Random number from 1-100
+    const randomNumber = Math.floor(Math.random() * 100) + 1;
+    return `M-${randomNumber}`;
   };
 }

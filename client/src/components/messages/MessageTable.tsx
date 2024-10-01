@@ -32,7 +32,7 @@ interface MessageTableProps {
 const columnHelper = createColumnHelper<MessageSubscribeData[0]>();
 
 const defaultColumns = [
-  columnHelper.accessor("messageId", {
+  columnHelper.accessor("label", {
     header: "ID",
   }),
   columnHelper.accessor("message", {

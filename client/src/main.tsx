@@ -30,6 +30,7 @@ const getOrCreateName = () => {
 
 const rep = new Replicache({
   licenseKey: import.meta.env.VITE_PUBLIC_REPLICACHE_LICENSE_KEY as string,
+  logLevel: "debug",
   mutators: new Mutations()
     .extend(Node.mutations)
     .extend(Message.mutations)

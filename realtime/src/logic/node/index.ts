@@ -4,7 +4,7 @@ import { Node_TB } from "../../schema";
 import { eq } from "drizzle-orm";
 import { Transaction } from "../../db";
 
-const getNodeById = async (tx: Transaction, nodeId: string) => {
+export const getNodeById = async (tx: Transaction, nodeId: string) => {
   const node = await tx
     .select()
     .from(Node_TB)

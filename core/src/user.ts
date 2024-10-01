@@ -16,13 +16,12 @@ export module User {
   export const mutations = new Mutations()
     .register(
       "insertUser",
-      z.object({ name: z.string(), email: z.string() }),
+      z.object({ id: z.string(), name: z.string(), email: z.string() }),
       async (tx, input) => {
-        const userId = createId();
-        await tx.set(`users/${userId}`, {
+        await tx.set(`users/${input.id}`, {
           email: input.email,
           name: input.name,
-          userId,
+          userId: input.id,
         } satisfies Info);
       },
     )

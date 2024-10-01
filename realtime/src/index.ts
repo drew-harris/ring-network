@@ -14,6 +14,8 @@ import { PullRequestV1, PullResponseV1, PushRequestV1 } from "replicache";
 import { getChangedNodes } from "./logic/node/getChanged";
 import { createNodeWebSocket } from "@hono/node-ws";
 import { WSContext } from "hono/ws";
+import { getChangedMessages } from "./logic/message/getChanged";
+import { getChangedUsers } from "./logic/user/getChanged";
 
 const app = new Hono();
 
@@ -69,11 +71,13 @@ app.post("/pull", async (c) => {
       fromVersion,
     );
 
-    const ops = await getChangedNodes(tx, fromVersion);
+    const nodeOps = await getChangedNodes(tx, fromVersion);
+    const messageOps = await getChangedMessages(tx, fromVersion);
+    const userOps = await getChangedUsers(tx, fromVersion);
 
     return {
       cookie: serverVersion.version,
-      patch: ops,
+      patch: [...nodeOps, ...messageOps, ...userOps],
       lastMutationIDChanges: lastMutationIDChanges,
     } satisfies PullResponseV1;
   });

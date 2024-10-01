@@ -13,6 +13,39 @@ export const Node_TB = pgTable("nodes", {
   version: integer("version").notNull(),
 });
 
+export const Message_TB = pgTable("messages", {
+  messageId: text("messageId").primaryKey(),
+  label: text("label").notNull(),
+  senderId: text("senderId").notNull(),
+  reciverId: text("reciverId").notNull(),
+  message: text("message").notNull(),
+  createdAt: text("createdAt").notNull(),
+  receivedAt: text("receivedAt").notNull(),
+  direction: text("direction", {
+    enum: ["left", "right"],
+  }).notNull(),
+  path: text("path").array().notNull(),
+  status: text("status", {
+    enum: ["Created", "Delivered", "Undelivered"],
+  }).notNull(),
+  seen: boolean("seen").notNull().default(false),
+  placement: text("placement", {
+    enum: ["node", "archive", "undelivered"],
+  }).notNull(),
+  // Replicache values
+  deleted: boolean("deleted").default(false),
+  version: integer("version").notNull(),
+});
+
+export const User_TB = pgTable("users", {
+  userId: text("userId").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  // Replicache values
+  deleted: boolean("deleted").default(false),
+  version: integer("version").notNull(),
+});
+
 export const Server_TB = pgTable("realtime_server", {
   id: text("id").primaryKey(),
   version: integer("version").notNull(),

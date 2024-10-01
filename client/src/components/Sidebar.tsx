@@ -35,6 +35,7 @@ export const Sidebar = (props: SidebarProps) => {
   return (
     <div>
       <div className="text-lg font-bold">{data.label}</div>
+      <div className="text-xs font-bold">{data.nodeId}</div>
       <div className="flex gap-2 w-full">
         {data.label !== "N-1" && (
           <IconButton
