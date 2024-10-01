@@ -74,6 +74,7 @@ export class Mutations<Mutators> {
     arg1: Arg1,
     cb: Callback,
   ): Mutations<Mutators & { [name in Name]: Mutator<Arg1, Callback> }> {
+    // @ts-ignore
     this.mutations[name as string] = mutation(arg1, cb);
     return this as Mutations<
       Mutators & { [name in Name]: Mutator<Arg1, Callback> }
