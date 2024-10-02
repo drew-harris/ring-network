@@ -267,7 +267,34 @@ export module Node {
         .values()
         .toArray();
 
-      return nodes.length;
+      // Order nodes by leftNeighbor
+      const first = nodes.find((node) => node.label === "N-1");
+
+      if (!first) {
+        return [];
+      }
+
+      let finalList: Info[] = [first];
+      let nextOne: undefined | Info = await getNode(tx, first.leftNeighbor);
+      if (!nextOne) {
+        return [];
+      }
+      while (nextOne !== first) {
+        if (!nextOne) {
+          break;
+        }
+        finalList.push(nextOne);
+        // @ts-ignore
+        const possNext = await tx.get<Node.Info>(
+          `nodes/${nextOne.leftNeighbor}`,
+        );
+        if (!possNext) {
+          break;
+        }
+        nextOne = possNext;
+      }
+
+      return finalList.length;
     },
 
     getNewNodeName: async (tx: ReadTransaction) => {
