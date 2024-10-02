@@ -1,12 +1,14 @@
 import { IconButton } from "@/components/ui/iconbutton";
+import autoAnimate from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Separator } from "@/components/ui/separator";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { RealtimeClientContext } from "@/main";
 import { Tooltip } from "@radix-ui/react-tooltip";
 import { Message } from "core/message";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Trash } from "lucide-react";
-import { useContext, useState } from "react";
+import { ChevronDown, Eye, Trash } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useSubscribe } from "replicache-react";
 
 interface SidebarMessageListProps {
@@ -26,6 +28,10 @@ export const SidebarMessageList = (props: SidebarMessageListProps) => {
   const seenMessages = messages?.filter((m) => m.seen);
   const unseenMessages = messages?.filter((m) => !m.seen);
 
+  const [parent, enableAnimations] = useAutoAnimate({
+    duration: 200,
+  });
+
   return (
     <div className="flex flex-col">
       <div className="text-lg font-semibold pt-2">
@@ -39,10 +45,10 @@ export const SidebarMessageList = (props: SidebarMessageListProps) => {
           </>
         )}
       </div>
-      <div className="flex flex-col">
+      <div ref={parent} className="flex flex-col">
         {unseenMessages && unseenMessages.length > 0 && (
           <>
-            <div className="text-sm font-medium pt-2">Unseen Messages</div>
+            <div className="text-sm font-medium pt-2">Inbox</div>
             {unseenMessages.map((message) => (
               <MessageInSidebar key={message.messageId} message={message} />
             ))}
@@ -50,7 +56,7 @@ export const SidebarMessageList = (props: SidebarMessageListProps) => {
         )}
         {seenMessages && seenMessages.length > 0 && (
           <>
-            <div className="text-sm font-medium pt-2">Seen Messages</div>
+            <div className="text-sm font-medium pt-2">Storage</div>
             {seenMessages.map((message) => (
               <MessageInSidebar key={message.messageId} message={message} />
             ))}
@@ -76,7 +82,7 @@ const MessageInSidebar = (props: {
       <div
         onClick={() => {
           setOpen(!open);
-          r.mutate.markMessageAsSeen(props.message.messageId);
+          // r.mutate.markMessageAsSeen(props.message.messageId);
         }}
         className="flex w-full items-center justify-between"
       >
@@ -118,7 +124,20 @@ const MessageInSidebar = (props: {
               <div>Direction: {props.message.direction}</div>
               <div>ID: {props.message.label}</div>
             </div>
-            <div className="flex absolute bottom-0 right-0">
+            <div className="absolute bottom-0 right-0">
+              {!props.message.seen && (
+                <IconButton
+                  className="w-6 h-6"
+                  label="Mark Seen"
+                  onClick={() => {
+                    // Unselect the node
+                    // sel.clearSelectedNode();
+                    r.mutate.markMessageAsSeen(props.message.messageId);
+                  }}
+                >
+                  <Eye size={14} />
+                </IconButton>
+              )}
               <IconButton
                 className="w-6 h-6"
                 label="Delete"
