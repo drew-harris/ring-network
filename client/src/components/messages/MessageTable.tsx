@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { Node } from "core/node";
 import {
   Table,
   TableBody,
@@ -7,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { RealtimeClientContext } from "@/main";
 import {
   createColumnHelper,
   flexRender,
@@ -17,7 +19,8 @@ import {
 
 import { Message } from "core/message";
 import { ChevronDown } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
+import { useSubscribe } from "replicache-react";
 
 export type MessageSubscribeData = Awaited<
   ReturnType<typeof Message.queries.getAllMessages>
@@ -31,39 +34,6 @@ interface MessageTableProps {
 
 const columnHelper = createColumnHelper<MessageSubscribeData[0]>();
 
-const defaultColumns = [
-  columnHelper.accessor("label", {
-    header: "ID",
-  }),
-  columnHelper.accessor("message", {
-    header: "Message",
-    size: 400,
-    minSize: 300,
-    maxSize: 600,
-  }),
-  columnHelper.accessor("senderId", {
-    header: "From",
-  }),
-  columnHelper.accessor("reciverId", {
-    header: "To",
-  }),
-  columnHelper.accessor("direction", {
-    header: "Direction",
-  }),
-  columnHelper.accessor("createdAt", {
-    header: "Sent At",
-    cell(props) {
-      return new Date(props.getValue()).toLocaleString();
-    },
-  }),
-  columnHelper.accessor("path", {
-    header: "Path",
-    cell(props) {
-      return props.getValue().join(" -> ");
-    },
-  }),
-];
-
 export type RowSelectionState = Record<string, boolean>;
 
 export const MessageTable = ({
@@ -71,6 +41,56 @@ export const MessageTable = ({
   selected,
   setSelected,
 }: MessageTableProps) => {
+  const r = useContext(RealtimeClientContext);
+  const nodes = useSubscribe(r, Node.queries.getAllNodes, {
+    default: [],
+  });
+
+  const getNodeLabelById = (id: string) => {
+    return nodes.find((node) => node.nodeId === id)?.label || id;
+  };
+
+  const defaultColumns = [
+    columnHelper.accessor("label", {
+      header: "ID",
+    }),
+    columnHelper.accessor("message", {
+      header: "Message",
+      size: 400,
+      minSize: 300,
+      maxSize: 600,
+    }),
+    columnHelper.accessor("senderId", {
+      cell(props) {
+        return getNodeLabelById(props.getValue());
+      },
+      header: "From",
+    }),
+    columnHelper.accessor("reciverId", {
+      cell(props) {
+        return getNodeLabelById(props.getValue());
+      },
+      header: "To",
+    }),
+    columnHelper.accessor("direction", {
+      header: "Direction",
+    }),
+    columnHelper.accessor("createdAt", {
+      header: "Sent At",
+      cell(props) {
+        return new Date(props.getValue()).toLocaleString();
+      },
+    }),
+    columnHelper.accessor("path", {
+      header: "Path",
+      cell(props) {
+        return props
+          .getValue()
+          .map((id) => getNodeLabelById(id))
+          .join(" -> ");
+      },
+    }),
+  ];
   const table = useReactTable({
     data,
     columns: defaultColumns,

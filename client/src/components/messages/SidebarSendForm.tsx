@@ -24,6 +24,14 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const [direction, setDirection] = useState<"left" | "right">("left");
 
   const r = useContext(RealtimeClientContext);
+  const nodes = useSubscribe(r, Node.queries.getAllNodes, {
+    default: [],
+  });
+
+  const getNodeLabelById = (id: string) => {
+    return nodes.find((node) => node.nodeId === id)?.label || id;
+  };
+
   const otherNodes = useSubscribe(
     r,
     async (tx) => {
@@ -58,7 +66,6 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
 
     // Reset form
     setMessage("");
-    setTargetNodeId(null);
   };
 
   const setHoverNode = useSelectedNode((state) => state.setHoverNode);

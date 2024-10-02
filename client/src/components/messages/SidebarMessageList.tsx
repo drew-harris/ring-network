@@ -1,5 +1,4 @@
 import { IconButton } from "@/components/ui/iconbutton";
-import autoAnimate from "@formkit/auto-animate";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Separator } from "@/components/ui/separator";
 import { TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -8,7 +7,7 @@ import { Tooltip } from "@radix-ui/react-tooltip";
 import { Message } from "core/message";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Eye, Trash } from "lucide-react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { useSubscribe } from "replicache-react";
 
 interface SidebarMessageListProps {
@@ -28,7 +27,7 @@ export const SidebarMessageList = (props: SidebarMessageListProps) => {
   const seenMessages = messages?.filter((m) => m.seen);
   const unseenMessages = messages?.filter((m) => !m.seen);
 
-  const [parent, enableAnimations] = useAutoAnimate({
+  const [parent] = useAutoAnimate({
     duration: 200,
   });
 
