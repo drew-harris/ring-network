@@ -3,6 +3,10 @@ import { z } from "zod";
 import { Mutations } from "./utils";
 
 export module User {
+  export const passwordSchema = z
+    .string()
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#$%&])[A-Za-z\d@$%#&]{6,}$/);
+
   export const Info = z.object({
     userId: z.string(),
     name: z.string(),
@@ -40,14 +44,12 @@ export module User {
       "changePassword",
       z.object({
         userId: z.string(),
-        newPassword: z
-          .string()
-          .regex(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#$%&])[A-Za-z\d@$%#&]{6,}$/),
+        newPassword: passwordSchema,
       }),
       async (tx, input) => {
         const existing = await tx.get<Info>(`users/${input.userId}`);
         if (!existing) {
-          throw new Error("User not found");
+          return;
         }
 
         await tx.set(`users/${input.userId}`, {

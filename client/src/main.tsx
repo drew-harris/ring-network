@@ -39,7 +39,7 @@ const rep = new Replicache({
   name: getOrCreateName(),
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,
   pushURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/push`,
-  pullInterval: 8,
+  pullInterval: 8000,
 });
 
 const websocket = new WebSocket(

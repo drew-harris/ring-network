@@ -35,10 +35,10 @@ export const Navbar = () => {
           <PopoverContent className="w-40">
             <div className="text-sm pb-2 text-center">harrisd@smu.edu</div>
             <Link
-              to="/login"
+              to="/userinfo"
               className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
             >
-              Log Out
+              Manage User
             </Link>
             <Link
               to="/admin"
