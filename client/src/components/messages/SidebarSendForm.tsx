@@ -47,6 +47,7 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
           label: Message.generateMessageId(),
           createdAt: new Date().toISOString(),
           receivedAt: new Date().toISOString(),
+          direction,
           message,
           messageId: nanoid(6),
           reciverId: targetNodeId,

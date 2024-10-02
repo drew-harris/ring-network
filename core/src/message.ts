@@ -33,6 +33,7 @@ export module Message {
         senderId: z.string(),
         reciverId: z.string(),
         message: z.string(),
+        direction: z.enum(["left", "right"]),
       }),
       async (tx, input) => {
         // Check to see if the reciver is online and active
@@ -41,7 +42,7 @@ export module Message {
         if (!reciverNode || reciverNode.status === "inactive") {
           return await tx.set(`messages/${input.messageId}`, {
             ...input,
-            direction: "left",
+            direction: input.direction,
             path: [input.senderId, input.reciverId],
             status: "Undelivered",
             placement: "undelivered",
@@ -51,7 +52,7 @@ export module Message {
 
         return await tx.set(`messages/${input.messageId}`, {
           ...input,
-          direction: "left",
+          direction: input.direction,
           path: [input.senderId, input.reciverId],
           status: "Delivered",
           placement: "node",

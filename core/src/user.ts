@@ -7,6 +7,8 @@ export module User {
     userId: z.string(),
     name: z.string(),
     email: z.string(),
+    type: z.enum(["admin", "operator"]),
+    password: z.string(),
   });
 
   export type Info = z.infer<typeof Info>;
@@ -16,15 +18,45 @@ export module User {
   export const mutations = new Mutations()
     .register(
       "insertUser",
-      z.object({ id: z.string(), name: z.string(), email: z.string() }),
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string().email(),
+        type: z.enum(["admin", "operator"]),
+        password: z.string(),
+      }),
       async (tx, input) => {
         await tx.set(`users/${input.id}`, {
           email: input.email,
           name: input.name,
           userId: input.id,
+          type: input.type,
+          password: input.password,
         } satisfies Info);
       },
     )
+
+    .register(
+      "changePassword",
+      z.object({
+        userId: z.string(),
+        newPassword: z
+          .string()
+          .regex(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#$%&])[A-Za-z\d@$%#&]{6,}$/),
+      }),
+      async (tx, input) => {
+        const existing = await tx.get<Info>(`users/${input.userId}`);
+        if (!existing) {
+          throw new Error("User not found");
+        }
+
+        await tx.set(`users/${input.userId}`, {
+          ...existing,
+          password: input.newPassword,
+        });
+      },
+    )
+
     .register("deleteUser", z.string(), async (tx, input) => {
       await tx.del(`users/${input}`);
     });

@@ -39,8 +39,12 @@ export const Message_TB = pgTable("messages", {
 
 export const User_TB = pgTable("users", {
   userId: text("userId").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   email: text("email").notNull(),
+  type: text("type", {
+    enum: ["admin", "operator"],
+  }).notNull(),
+  password: text("password").notNull(),
   // Replicache values
   deleted: boolean("deleted").default(false),
   version: integer("version").notNull(),

@@ -94,6 +94,16 @@ export const nodeServerMutations: ServerMutations<(typeof Node)["mutations"]> =
       const nodeId = input.nodeId;
       const after = input.after;
 
+      // Check that you can't make more than 10
+      const existingActiveNodes = await tx
+        .select()
+        .from(Node_TB)
+        .where(eq(Node_TB.deleted, false));
+
+      if (existingActiveNodes.length >= 10) {
+        throw new Error("Cannot create more than 10 nodes");
+      }
+
       // Check if nodeId already exists
       const existingNode = await tx
         .select()

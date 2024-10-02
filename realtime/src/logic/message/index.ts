@@ -28,7 +28,6 @@ export const messageServerMutations: ServerMutations<
       await tx.insert(Message_TB).values([
         {
           ...input,
-          direction: "left",
           path: [input.senderId, input.reciverId],
           status: "Undelivered",
           placement: "undelivered",
@@ -41,7 +40,6 @@ export const messageServerMutations: ServerMutations<
       await tx.insert(Message_TB).values([
         {
           ...input,
-          direction: "left",
           path: [input.senderId, input.reciverId],
           status: "Delivered",
           placement: "node",

@@ -16,6 +16,7 @@ import { createNodeWebSocket } from "@hono/node-ws";
 import { WSContext } from "hono/ws";
 import { getChangedMessages } from "./logic/message/getChanged";
 import { getChangedUsers } from "./logic/user/getChanged";
+import { forceResync } from "./force-resync";
 
 const app = new Hono();
 
@@ -117,6 +118,11 @@ app.get("/reset", async (c) => {
   await createTransaction(async (tx) => {
     await reset(tx);
   });
+  return c.json({ done: true });
+});
+
+app.get("/resync", async (c) => {
+  await forceResync();
   return c.json({ done: true });
 });
 
