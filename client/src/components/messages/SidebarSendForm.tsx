@@ -28,9 +28,7 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const otherNodes = useSubscribe(
     r,
     async (tx) => {
-      return (await Node.queries.getAllNodes(tx)).filter(
-        (node) => node.nodeId !== nodeId,
-      );
+      return await Node.queries.getAllNodes(tx);
     },
     {
       default: [],

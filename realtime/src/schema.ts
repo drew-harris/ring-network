@@ -30,11 +30,16 @@ export const Message_TB = pgTable("messages", {
   }).notNull(),
   seen: boolean("seen").notNull().default(false),
   placement: text("placement", {
-    enum: ["node", "archive", "undelivered"],
+    enum: ["node", "system_buffer", "undelivered"],
   }).notNull(),
   // Replicache values
   deleted: boolean("deleted").default(false),
   version: integer("version").notNull(),
+});
+
+export const InFlight_TB = pgTable("in_flight", {
+  messageId: text("messageId").primaryKey(),
+  position: text("position").notNull(),
 });
 
 export const User_TB = pgTable("users", {
@@ -45,9 +50,6 @@ export const User_TB = pgTable("users", {
     enum: ["admin", "operator"],
   }).notNull(),
   password: text("password").notNull(),
-  // Replicache values
-  deleted: boolean("deleted").default(false),
-  version: integer("version").notNull(),
 });
 
 export const Server_TB = pgTable("realtime_server", {

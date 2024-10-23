@@ -271,13 +271,13 @@ export module Node {
       const first = nodes.find((node) => node.label === "N-1");
 
       if (!first) {
-        return [];
+        return 0;
       }
 
       let finalList: Info[] = [first];
       let nextOne: undefined | Info = await getNode(tx, first.leftNeighbor);
       if (!nextOne) {
-        return [];
+        return 0;
       }
       while (nextOne !== first) {
         if (!nextOne) {

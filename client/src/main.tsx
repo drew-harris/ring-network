@@ -42,17 +42,27 @@ const rep = new Replicache({
   pullInterval: 8000,
 });
 
-const websocket = new WebSocket(
-  `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/poke`,
-);
+const createWebSocket = () => {
+  const ws = new WebSocket(`${import.meta.env.VITE_PUBLIC_BACKEND_URL}/poke`);
 
-websocket.addEventListener("open", () => {
-  console.log("connection established");
-  websocket.addEventListener("message", (event) => {
+  ws.addEventListener("open", () => {
+    console.log("WebSocket connection established");
+  });
+
+  ws.addEventListener("message", (event) => {
     console.log("WS MESSAGE", event.data);
     rep.pull({ now: true });
   });
-});
+
+  ws.addEventListener("close", () => {
+    console.log("WebSocket connection closed. Reconnecting...");
+    setTimeout(createWebSocket, 2000);
+  });
+
+  return ws;
+};
+
+createWebSocket();
 
 export type RealtimeClient = typeof rep;
 
