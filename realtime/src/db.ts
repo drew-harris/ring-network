@@ -9,6 +9,7 @@ export type Transaction = PostgresJsTransaction<
   ExtractTablesWithRelations<Record<string, never>>
 >;
 
+console.log(process.env.DATABASE_URL);
 const queryClient = postgres(process.env.DATABASE_URL!);
 const db = drizzle(queryClient, { logger: false });
 

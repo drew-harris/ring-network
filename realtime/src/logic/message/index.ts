@@ -55,7 +55,7 @@ export const messageServerMutations: ServerMutations<
     await tx
       .update(Message_TB)
       .set({
-        placement: "archive",
+        placement: "system_buffer",
         version,
       })
       .where(inArray(Message_TB.messageId, input));

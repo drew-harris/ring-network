@@ -130,7 +130,7 @@ console.log(`Server is running on port ${port}`);
 app.onError((err, c) => {
   console.error(err);
   c.status(500);
-  return c.json({ error: "Internal server error" });
+  return c.json({ error: "Internal server error", message: err.message });
 });
 
 const server = serve({

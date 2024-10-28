@@ -2,9 +2,7 @@
   "name": "user-server",
   "module": "index.ts",
   "type": "module",
-  "scripts": {
-    "dev": "mvn"
-  },
+  "scripts": {},
   "devDependencies": {
     "@types/bun": "latest"
   },
