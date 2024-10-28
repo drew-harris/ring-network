@@ -1,0 +1,14 @@
+{
+  "name": "user-server",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "mvn"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

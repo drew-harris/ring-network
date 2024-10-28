@@ -29,3 +29,4 @@ lerna-debug.log*
 
 # misc
 .DS_Store
+user-server/src/main/resources/application.properties
