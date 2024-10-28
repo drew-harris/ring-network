@@ -49,6 +49,12 @@ export const User_TB = pgTable("users", {
   type: text("type", {
     enum: ["admin", "operator"],
   }).notNull(),
+});
+
+export const Auth_TB = pgTable("auth", {
+  userId: text("userId")
+    .primaryKey()
+    .references(() => User_TB.userId),
   password: text("password").notNull(),
 });
 
