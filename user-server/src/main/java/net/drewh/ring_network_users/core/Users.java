@@ -32,6 +32,20 @@ public class Users {
         return users;
     }
 
+    public User createUser(User user, String password) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (userId, name, email, type) VALUES (?, ?, ?, ?)")) {
+            stmt.setString(1, user.userId);
+            stmt.setString(2, user.name);
+            stmt.setString(3, user.email);
+            stmt.setString(4, user.type);
+            stmt.executeUpdate();
+            return user;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private User mapUser(ResultSet rs) throws SQLException {
         return new User(
             rs.getString("userId"),
@@ -40,4 +54,5 @@ public class Users {
             rs.getString("type")
         );
     }
+
 }

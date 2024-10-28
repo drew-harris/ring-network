@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
+import net.drewh.ring_network_users.core.Auth;
 import net.drewh.ring_network_users.core.Users;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -18,5 +19,10 @@ public class RingNetworkUsersApplication {
 	@Bean
 	public Users userRepository() {
 			return context.userRepository;
+	}
+
+	@Bean
+	public Auth authRepository() {
+			return context.authRepository;
 	}
 }
