@@ -33,7 +33,7 @@ export const Navbar = () => {
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-40">
-            <div className="text-sm pb-2 text-center">harrisd@smu.edu</div>
+            <div className="text-sm pb-2 text-center">drewh</div>
             <Link
               to="/userinfo"
               className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
