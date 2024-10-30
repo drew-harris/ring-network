@@ -37,7 +37,9 @@ public class Auth {
 
     public void updatePassword(String userId, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (user_id, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?")) {
+        PreparedStatement stmt = conn.prepareStatement(
+             "INSERT INTO auth (user_id, password) VALUES (?, ?) " +
+             "ON CONFLICT (user_id) DO UPDATE SET password = ?")) {
             stmt.setString(1, userId);
             stmt.setString(2, password);
             stmt.setString(3, password);

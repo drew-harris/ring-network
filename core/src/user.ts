@@ -68,17 +68,18 @@ export module User {
       return (await response.json()) as Info;
     },
 
-    updatePassword: async (userId: string, password: string) => {
-      const response = await fetch(API_KEY + `/users/${userId}/password`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+    updatePassword: async (params: { userId: string; password: string }) => {
+      const response = await fetch(
+        API_KEY + `/users/${params.userId}/password`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: params.password,
         },
-        body: JSON.stringify({
-          password,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update password");

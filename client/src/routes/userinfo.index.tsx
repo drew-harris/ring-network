@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RealtimeClientContext } from "@/main";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { User } from "core/user";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/userinfo/")({
   component: UserInfoPage,
@@ -13,17 +13,19 @@ function UserInfoPage() {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
 
-  const r = useContext(RealtimeClientContext);
+  const updatePasswordMutation = useMutation({
+    mutationFn: User.Api.updatePassword,
+  });
 
   const saveNewPassword = async () => {
-    const result = User.passwordSchema.safeParse(newPassword);
-    if (result.error) {
-      setNewPasswordError("Password must fufill requirements");
-      return;
-    }
-    r.mutate.changePassword({
-      newPassword: newPassword,
-      userId: "root",
+    // const result = User.passwordSchema.safeParse(newPassword);
+    // if (result.error) {
+    //   setNewPasswordError("Password must fufill requirements");
+    //   return;
+    // }
+    updatePasswordMutation.mutate({
+      userId: "HSw2Ko4z",
+      password: newPassword,
     });
   };
 
@@ -66,4 +68,3 @@ function UserInfoPage() {
     </div>
   );
 }
-
