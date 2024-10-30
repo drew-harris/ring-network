@@ -44,7 +44,7 @@ export const messageServerMutations: ServerMutations<
           path: [input.senderId, input.reciverId],
           status: "Created",
           receivedAt: null,
-          placement: "undelivered",
+          placement: "node",
           seen: false,
           version: version,
           deleted: false,
