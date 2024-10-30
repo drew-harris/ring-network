@@ -20,7 +20,7 @@ export const Message_TB = pgTable("messages", {
   reciverId: text("reciverId").notNull(),
   message: text("message").notNull(),
   createdAt: text("createdAt").notNull(),
-  receivedAt: text("receivedAt").notNull(),
+  receivedAt: text("receivedAt"),
   direction: text("direction", {
     enum: ["left", "right"],
   }).notNull(),
