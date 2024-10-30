@@ -43,7 +43,7 @@ function AdminPage() {
     defaultValues: {
       username: "",
       email: "",
-      password: "",
+      password: nanoid(5),
       type: "admin" as "admin" | "operator",
     },
   });
@@ -92,7 +92,7 @@ function AdminPage() {
         email: data.email,
         type: data.type,
       },
-      password: data.password,
+      password: nanoid(5),
     });
 
     form.reset();

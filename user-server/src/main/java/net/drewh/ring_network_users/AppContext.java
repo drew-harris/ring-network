@@ -25,6 +25,6 @@ public class AppContext {
         this.dataSource = new HikariDataSource(config);
         
         this.userRepository = new Users(dataSource);
-	this.authRepository = new Auth(dataSource);
+	this.authRepository = new Auth(dataSource, userRepository);
     }
 }

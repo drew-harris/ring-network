@@ -52,4 +52,18 @@ public class UserController {
         User user = this.userRepo.createUser(request.user, request.password);
         return ResponseEntity.ok(user);
     }
+
+    private static class LoginRequest {
+        public String username;
+        public String password;
+    }
+
+    @PostMapping("/users/login")
+    public boolean login(@RequestBody LoginRequest request) {
+        try {
+            return this.authRepo.checkPasswordAndUsername(request.username, request.password);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

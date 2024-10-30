@@ -84,5 +84,25 @@ export module User {
         throw new Error("Failed to update password");
       }
     },
+
+    login: async (username: string, password: string) => {
+      const response = await fetch(API_KEY + `/users/login`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to login");
+      }
+
+      return (await response.json()) as boolean;
+    },
   };
 }

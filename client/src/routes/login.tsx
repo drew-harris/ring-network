@@ -16,15 +16,16 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-  const fakeFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+  const fakeFormSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (!username) {
       setUsernameError("Username is required");
       return;
     }
-    const result = User.passwordSchema.safeParse(password);
-    if (result.error) {
-      setPasswordError("Password must fufill requirements");
+
+    const loginResult = await User.Api.login(username, password);
+    if (!loginResult) {
+      setPasswordError("Invalid username or password");
       return;
     }
 

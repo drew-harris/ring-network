@@ -8,17 +8,20 @@ import java.sql.SQLException;
 import com.zaxxer.hikari.HikariDataSource;
 
 import net.drewh.ring_network_users.model.AuthPair;
+import net.drewh.ring_network_users.model.User;
 
 public class Auth {
     private final HikariDataSource dataSource;
+    private final Users userRepo;
 
-    public Auth(HikariDataSource dataSource) {
+    public Auth(HikariDataSource dataSource, Users userRepo) {
         this.dataSource = dataSource;
+        this.userRepo = userRepo;
     }
 
     public AuthPair getAuthPairByUserId(String userId) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE user_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM auth WHERE user_id = ?")) {
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -58,4 +61,19 @@ public class Auth {
             throw new RuntimeException(e);
         }
     }   
+
+    public boolean checkPasswordAndUsername(String username, String password) {
+        User user = this.userRepo.getUserByUsername(username);
+        System.out.println(user);
+        if (user == null) {
+            return false;
+        }
+        AuthPair authPair = this.getAuthPairByUserId(user.userId);
+        if (authPair == null) {
+            return false;
+        }
+
+        return authPair.password.equals(password);
+        
+    }
 }

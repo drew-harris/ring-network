@@ -32,6 +32,36 @@ public class Users {
         return users;
     }
 
+    public User getUserById(String userId) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE user_id = ?")) {
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapUser(rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public User getUserByUsername(String username) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE name = ?")) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapUser(rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public User createUser(User user, String password) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (user_id, name, email, type) VALUES (?, ?, ?, ?)")) {
@@ -40,6 +70,11 @@ public class Users {
             stmt.setString(3, user.email);
             stmt.setString(4, user.type);
             stmt.executeUpdate();
+
+            PreparedStatement authStmt = conn.prepareStatement("INSERT INTO auth (user_id, password) VALUES (?, ?)");
+            authStmt.setString(1, user.userId);
+            authStmt.setString(2, password);
+            authStmt.executeUpdate();
             return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
