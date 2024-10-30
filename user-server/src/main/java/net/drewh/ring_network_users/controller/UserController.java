@@ -43,13 +43,13 @@ public class UserController {
     }
 
     private static class CreateUserRequest {
-        private User user;
-        private String password;
+        public User user;
+        public String password;
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Void> createUser(@RequestBody CreateUserRequest request) {
-        this.userRepo.createUser(request.user, request.password);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
+        User user = this.userRepo.createUser(request.user, request.password);
+        return ResponseEntity.ok(user);
     }
 }

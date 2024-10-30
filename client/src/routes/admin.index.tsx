@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useContext } from "react";
 import {
   Table,
   TableBody,
@@ -12,9 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RealtimeClientContext } from "@/main";
 import { User } from "core/user";
-import { useSubscribe } from "replicache-react";
 import { IconButton } from "@/components/ui/iconbutton";
 import { ChevronLeft, Trash } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -25,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminPage,
@@ -50,29 +48,60 @@ function AdminPage() {
     },
   });
 
+  const queryUtils = useQueryClient();
+
+  const deleteUserMutation = useMutation({
+    mutationFn: User.Api.deleteUser,
+    onMutate(userId) {
+      queryUtils.setQueryData(["users"], (oldData: User.Info[]) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        const newData = oldData.filter((user) => user.userId !== userId);
+        return newData;
+      });
+    },
+    onSuccess() {
+      users.refetch();
+    },
+  });
+
+  const addUserMutation = useMutation({
+    mutationFn: User.Api.createUser,
+    onMutate(variables) {
+      queryUtils.setQueryData(["users"], (oldData: User.Info[]) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        const newData = [...oldData, variables.user];
+        return newData;
+      });
+    },
+    onSuccess() {
+      users.refetch();
+    },
+  });
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    r.mutate.insertUser({
-      id: User.createId(),
-      password: nanoid(8),
-      type: data.type,
-      name: data.username,
-      email: data.email,
+    addUserMutation.mutate({
+      user: {
+        userId: nanoid(8),
+        name: data.username,
+        email: data.email,
+        type: data.type,
+      },
+      password: data.password,
     });
 
     form.reset();
   };
 
-  const r = useContext(RealtimeClientContext);
-  const users = useSubscribe(
-    r,
-    async (tx) => {
-      return await User.queries.getAllUsers(tx);
-    },
-    {
-      default: [],
-      dependencies: [],
-    },
-  );
+  const users = useQuery({
+    queryKey: ["users"],
+    queryFn: User.Api.getAllUsers,
+  });
 
   return (
     <div className="p-4 mx-auto max-w-4xl">
@@ -144,7 +173,7 @@ function AdminPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {users.data?.map((user) => (
             <TableRow key={user.userId}>
               <TableCell>{user.userId}</TableCell>
               <TableCell>{user.name}</TableCell>
@@ -152,7 +181,7 @@ function AdminPage() {
               <TableCell>
                 <IconButton
                   onClick={() => {
-                    r.mutate.deleteUser(user.userId);
+                    deleteUserMutation.mutate(user.userId);
                   }}
                 >
                   <Trash size={12} />

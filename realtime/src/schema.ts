@@ -43,7 +43,7 @@ export const InFlight_TB = pgTable("in_flight", {
 });
 
 export const User_TB = pgTable("users", {
-  userId: text("userId").primaryKey(),
+  userId: text("user_id").primaryKey(),
   name: text("name").notNull().unique(),
   email: text("email").notNull(),
   type: text("type", {
@@ -52,7 +52,7 @@ export const User_TB = pgTable("users", {
 });
 
 export const Auth_TB = pgTable("auth", {
-  userId: text("userId")
+  userId: text("user_id")
     .primaryKey()
     .references(() => User_TB.userId),
   password: text("password").notNull(),

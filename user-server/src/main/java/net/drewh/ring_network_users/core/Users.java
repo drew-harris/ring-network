@@ -34,7 +34,7 @@ public class Users {
 
     public User createUser(User user, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (userId, name, email, type) VALUES (?, ?, ?, ?)")) {
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (user_id, name, email, type) VALUES (?, ?, ?, ?)")) {
             stmt.setString(1, user.userId);
             stmt.setString(2, user.name);
             stmt.setString(3, user.email);
@@ -48,7 +48,7 @@ public class Users {
 
     private User mapUser(ResultSet rs) throws SQLException {
         return new User(
-            rs.getString("userId"),
+            rs.getString("user_id"),
             rs.getString("name"),
             rs.getString("email"),
             rs.getString("type")

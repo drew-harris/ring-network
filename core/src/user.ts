@@ -10,10 +10,79 @@ export module User {
     name: z.string(),
     email: z.string(),
     type: z.enum(["admin", "operator"]),
-    password: z.string(),
   });
 
   export type Info = z.infer<typeof Info>;
 
   export const createId = () => `U-${Math.floor(Math.random() * 100000000)}`;
+
+  // API Key
+  // @ts-ignore
+  const API_KEY = import.meta.env.VITE_PUBLIC_JAVA_BACKEND_URL!;
+
+  export const Api = {
+    getAllUsers: async () => {
+      const response = await fetch(API_KEY + "/users", {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get users");
+      }
+
+      return (await response.json()) as Info[];
+    },
+
+    deleteUser: async (userId: string) => {
+      const response = await fetch(API_KEY + `/users/${userId}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+    },
+
+    createUser: async (params: { user: Info; password: string }) => {
+      const response = await fetch(API_KEY + "/users", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: params.user,
+          password: params.password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create user");
+      }
+
+      return (await response.json()) as Info;
+    },
+
+    updatePassword: async (userId: string, password: string) => {
+      const response = await fetch(API_KEY + `/users/${userId}/password`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update password");
+      }
+    },
+  };
 }

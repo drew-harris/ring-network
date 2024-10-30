@@ -18,7 +18,7 @@ public class Auth {
 
     public AuthPair getAuthPairByUserId(String userId) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE userId = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE user_id = ?")) {
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -34,7 +34,7 @@ public class Auth {
 
     public void updatePassword(String userId, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (userId, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (user_id, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?")) {
             stmt.setString(1, userId);
             stmt.setString(2, password);
             stmt.setString(3, password);
@@ -46,11 +46,11 @@ public class Auth {
 
     public void deleteUser(String userId) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("DELETE FROM users WHERE userId = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM users WHERE user_id = ?")) {
             stmt.setString(1, userId);
             stmt.executeUpdate();
 
-            PreparedStatement authStmt = conn.prepareStatement("DELETE FROM auth WHERE userId = ?");
+            PreparedStatement authStmt = conn.prepareStatement("DELETE FROM auth WHERE user_id = ?");
             authStmt.setString(1, userId);
             authStmt.executeUpdate();
 

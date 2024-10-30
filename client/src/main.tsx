@@ -1,4 +1,6 @@
 import { StrictMode } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { createRoot } from "react-dom/client";
 import { Replicache } from "replicache";
 import { Node } from "core/node";
@@ -64,6 +66,8 @@ createWebSocket();
 
 export type RealtimeClient = typeof rep;
 
+const queryClient = new QueryClient();
+
 const router = createRouter({
   routeTree,
   context: {
@@ -75,8 +79,10 @@ export const RealtimeClientContext = React.createContext<RealtimeClient>(rep);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RealtimeClientContext.Provider value={rep}>
-      <RouterProvider context={{ replicache: rep }} router={router} />
-    </RealtimeClientContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <RealtimeClientContext.Provider value={rep}>
+        <RouterProvider context={{ replicache: rep }} router={router} />
+      </RealtimeClientContext.Provider>
+    </QueryClientProvider>
   </StrictMode>,
 );
