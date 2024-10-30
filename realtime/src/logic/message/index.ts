@@ -1,5 +1,5 @@
 import { ServerMutations } from "../../server-mutation";
-import { Message_TB, Node_TB } from "../../schema";
+import { Message_TB } from "../../schema";
 import { eq, inArray } from "drizzle-orm";
 import { Transaction } from "../../db";
 import { Message } from "core/message";
@@ -23,7 +23,7 @@ export const messageServerMutations: ServerMutations<
   (typeof Message)["mutations"]
 > = {
   sendMessage: async (tx, input, version) => {
-    const node = await getNodeById(tx, input.reciverId);
+    const node = await getNodeById(tx, input.senderId);
     if (!node || node.status === "inactive") {
       await tx.insert(Message_TB).values([
         {
@@ -32,6 +32,7 @@ export const messageServerMutations: ServerMutations<
           status: "Undelivered",
           placement: "undelivered",
           seen: false,
+          receivedAt: null,
           version: version,
           deleted: false,
         },
@@ -41,8 +42,9 @@ export const messageServerMutations: ServerMutations<
         {
           ...input,
           path: [input.senderId, input.reciverId],
-          status: "Delivered",
-          placement: "node",
+          status: "Created",
+          receivedAt: null,
+          placement: "undelivered",
           seen: false,
           version: version,
           deleted: false,

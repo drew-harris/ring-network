@@ -12,7 +12,7 @@ export module Message {
     reciverId: z.string(),
     message: z.string(),
     createdAt: z.string(),
-    receivedAt: z.string(),
+    receivedAt: z.string().nullable(),
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
     status: z.enum(["Created", "Delivered", "Undelivered"]), // TODO: Update
@@ -28,7 +28,6 @@ export module Message {
       z.object({
         messageId: z.string(),
         createdAt: z.string(),
-        receivedAt: z.string(),
         label: z.string(),
         senderId: z.string(),
         reciverId: z.string(),
@@ -37,15 +36,16 @@ export module Message {
       }),
       async (tx, input) => {
         // Check to see if the reciver is online and active
-        const reciverNode = await tx.get<Node.Info>(`nodes/${input.reciverId}`);
+        const senderNode = await tx.get<Node.Info>(`nodes/${input.senderId}`);
 
-        if (!reciverNode || reciverNode.status === "inactive") {
+        if (!senderNode || senderNode.status === "inactive") {
           return await tx.set(`messages/${input.messageId}`, {
             ...input,
             direction: input.direction,
             path: [input.senderId, input.reciverId],
             status: "Undelivered",
             placement: "undelivered",
+            receivedAt: null,
             seen: false,
           } satisfies Info);
         }
@@ -54,9 +54,10 @@ export module Message {
           ...input,
           direction: input.direction,
           path: [input.senderId, input.reciverId],
-          status: "Delivered",
-          placement: "node",
+          status: "Created",
+          placement: "undelivered",
           seen: false,
+          receivedAt: null,
         } satisfies Info);
       },
     )

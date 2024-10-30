@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { Replicache } from "replicache";
 import { Node } from "core/node";
 import { Message } from "core/message";
-import { User } from "core/user";
 import { Mutations } from "core/utils";
 import "./index.css";
 
@@ -34,7 +33,6 @@ const rep = new Replicache({
   mutators: new Mutations()
     .extend(Node.mutations)
     .extend(Message.mutations)
-    .extend(User.mutations)
     .build(),
   name: getOrCreateName(),
   pullURL: `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/pull`,

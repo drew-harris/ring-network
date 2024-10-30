@@ -2,7 +2,9 @@
   "name": "user-server",
   "module": "index.ts",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "dev": "source .env && mvn spring-boot:run"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
