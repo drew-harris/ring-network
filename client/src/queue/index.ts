@@ -2,8 +2,7 @@ import { RealtimeClient } from "@/main";
 
 export type Job<P> = {
   data: P;
-  runner: (params: {
-    params: P;
+  run: (params: {
     replicache: RealtimeClient;
     queue: JobQueue;
   }) => PromiseLike<void>;
@@ -43,8 +42,7 @@ export class JobQueue {
 
       if (job) {
         try {
-          await job.runner({
-            params: job.data,
+          await job.run({
             replicache: this.replicache,
             queue: this,
           });
@@ -52,8 +50,9 @@ export class JobQueue {
           console.error("Job failed:", error);
         }
 
-        // Wait for the specified delay before processing the next job
-        await new Promise((resolve) => setTimeout(resolve, this.delay));
+        await new Promise((resolve) =>
+          setTimeout(resolve, 100 / this.queue.length),
+        );
       }
     }
 
@@ -71,7 +70,7 @@ export class JobQueue {
 
 export const createJobQueue = (
   replicache: RealtimeClient,
-  delay: number = 250,
+  delay: number = 1000,
 ) => {
   return new JobQueue(replicache, delay);
 };

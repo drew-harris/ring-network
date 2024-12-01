@@ -7,7 +7,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { RealtimeClientContext } from "@/main";
+import { QueueContext, RealtimeClientContext } from "@/main";
+import { createMessageJob } from "@/queue/jobs";
 import { useSelectedNode } from "@/stores/selectedNode";
 import { Message } from "core/message";
 import { Node } from "core/node";
@@ -24,6 +25,8 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
   const [direction, setDirection] = useState<"left" | "right">("left");
 
   const r = useContext(RealtimeClientContext);
+
+  const queue = useContext(QueueContext);
 
   const otherNodes = useSubscribe(
     r,
@@ -42,16 +45,19 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
     if (message.length !== 0) {
       if (targetNodeId !== null) {
         console.log("SENDING MESSAGE");
-        r.mutate.sendMessage({
-          label: Message.generateMessageId(),
-          createdAt: new Date().toISOString(),
-          receivedAt: new Date().toISOString(),
-          direction,
-          message,
-          messageId: nanoid(6),
-          reciverId: targetNodeId,
-          senderId: nodeId,
-        });
+
+        queue.add(
+          createMessageJob({
+            label: Message.generateMessageId(),
+            createdAt: new Date().toISOString(),
+            receivedAt: new Date().toISOString(),
+            direction,
+            message,
+            messageId: nanoid(6),
+            reciverId: targetNodeId,
+            senderId: nodeId,
+          }),
+        );
       }
     }
 

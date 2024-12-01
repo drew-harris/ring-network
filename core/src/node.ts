@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Mutations } from "./utils";
-import { ReadTransaction, WriteTransaction } from "replicache";
+import { ReadTransaction, Replicache, WriteTransaction } from "replicache";
 
 export module Node {
   export const Info = z.object({
@@ -20,6 +20,17 @@ export module Node {
     nodeId: string,
   ) => {
     return tx.get<Info>(`nodes/${nodeId}`);
+  };
+
+  export const getById = async (
+    tx: Replicache,
+    nodeId: string,
+  ): Promise<Info | undefined> => {
+    const node = await tx.query(async (tx) => {
+      const node = await tx.get<Info>(`nodes/${nodeId}`);
+      return node as Info | undefined;
+    });
+    return node;
   };
 
   export const mutations = new Mutations()

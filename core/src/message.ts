@@ -1,3 +1,4 @@
+import { ReadTransaction, Replicache } from "replicache";
 import { Mutations, query } from "./utils";
 import { z } from "./zod";
 
@@ -29,6 +30,17 @@ export module Message {
   });
 
   export type Info = z.infer<typeof Info>;
+
+  export const getById = async (
+    tx: Replicache,
+    messageId: string,
+  ): Promise<Info | undefined> => {
+    const message = await tx.query(async (tx) => {
+      const message = await tx.get<Info>(`messages/${messageId}`);
+      return message as Info | undefined;
+    });
+    return message;
+  };
 
   export const schemas = {
     createMessage: z.object({
