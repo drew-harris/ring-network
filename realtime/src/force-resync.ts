@@ -1,5 +1,5 @@
-import { createTransaction, TxOrDb } from "./db";
-import { Message_TB, Node_TB, User_TB } from "./schema";
+import { createTransaction } from "./db";
+import { InFlight_TB, Message_TB, Node_TB } from "./schema";
 import { getServerVersion, updateServerVersion } from "./sync-utils";
 
 export const forceResync = async () => {
@@ -16,6 +16,10 @@ export const forceResync = async () => {
     });
 
     await t.update(Message_TB).set({
+      version: nextVersion,
+    });
+
+    await t.update(InFlight_TB).set({
       version: nextVersion,
     });
 

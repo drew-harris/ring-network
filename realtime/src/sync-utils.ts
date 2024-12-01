@@ -1,6 +1,13 @@
 import { Node } from "core/node";
 import { Transaction } from "./db";
-import { Client_TB, Message_TB, Node_TB, Server_TB, User_TB } from "./schema";
+import {
+  Client_TB,
+  InFlight_TB,
+  Message_TB,
+  Node_TB,
+  Server_TB,
+  User_TB,
+} from "./schema";
 import { MutationV1 } from "replicache";
 import { and, eq, gt } from "drizzle-orm";
 import { handleMutation } from "./logic/handleMutation";
@@ -99,6 +106,7 @@ export const reset = async (tx: Transaction) => {
   await tx.delete(Server_TB);
   await tx.delete(Client_TB);
   await tx.delete(User_TB);
+  await tx.delete(InFlight_TB);
 
   await tx.insert(Server_TB).values([
     {
