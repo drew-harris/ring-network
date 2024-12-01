@@ -1,10 +1,11 @@
 import { Mutations, query } from "./utils";
-import { Node } from "./node";
 import { z } from "./zod";
 
-const placementSchema = z.enum(["node", "archive", "undelivered"]);
+const placementSchema = z.enum(["node", "system-buffer", "undelivered"]);
 
 export module Message {
+  export type FailureReason = "InboxFull" | "NodeInactive" | "NodeNotFound";
+
   export const Info = z.object({
     messageId: z.string(),
     label: z.string(),
@@ -15,51 +16,67 @@ export module Message {
     receivedAt: z.string().nullable(),
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
-    status: z.enum(["Created", "Delivered", "Undelivered"]), // TODO: Update
+    status: z.enum([
+      "Created",
+      "OnRoute",
+      "Delivered",
+      "NotDelivered-InboxFull",
+      "NotDelivered-NodeInactive",
+      "NotDelivered-NodeNotFound",
+    ]), // TODO: Update
     seen: z.boolean(),
     placement: placementSchema,
   });
 
   export type Info = z.infer<typeof Info>;
 
+  export const schemas = {
+    createMessage: z.object({
+      messageId: z.string(),
+      createdAt: z.string(),
+      receivedAt: z.string(),
+      label: z.string(),
+      senderId: z.string(),
+      reciverId: z.string(),
+      message: z.string(),
+      direction: z.enum(["left", "right"]),
+    }),
+  };
+
   export const mutations = new Mutations()
+    .register("sendMessage", schemas.createMessage, async (tx, input) => {
+      // Check to see if the reciver is online and active
+      return await tx.set(`messages/${input.messageId}`, {
+        ...input,
+        direction: input.direction,
+        path: [input.senderId],
+        status: "Delivered",
+        placement: "node",
+        seen: false,
+      } satisfies Info);
+    })
+
     .register(
-      "sendMessage",
+      "failSend",
       z.object({
         messageId: z.string(),
-        createdAt: z.string(),
-        receivedAt: z.string(),
-        label: z.string(),
-        senderId: z.string(),
-        reciverId: z.string(),
-        message: z.string(),
-        direction: z.enum(["left", "right"]),
+        reason: z.enum(["InboxFull", "NodeInactive", "NodeNotFound"]),
       }),
       async (tx, input) => {
-        // Check to see if the reciver is online and active
-        const reciverNode = await tx.get<Node.Info>(`nodes/${input.reciverId}`);
-
-        if (!reciverNode || reciverNode.status === "inactive") {
-          return await tx.set(`messages/${input.messageId}`, {
-            ...input,
-            direction: input.direction,
-            path: [input.senderId, input.reciverId],
-            status: "Undelivered",
-            placement: "undelivered",
-            seen: false,
-          } satisfies Info);
+        const currentMessage = (await tx.get<Info>(
+          `messages/${input.messageId}`,
+        )) as Info | undefined;
+        if (!currentMessage) {
+          return;
         }
-
         return await tx.set(`messages/${input.messageId}`, {
-          ...input,
-          direction: input.direction,
-          path: [input.senderId, input.reciverId],
-          status: "Delivered",
-          placement: "node",
-          seen: false,
+          ...currentMessage,
+          placement: "system-buffer",
+          status: `NotDelivered-${input.reason}`,
         } satisfies Info);
       },
     )
+
     .register("deleteMessage", z.string(), async (tx, input) => {
       return await tx.del(`messages/${input}`);
     })
@@ -80,11 +97,16 @@ export module Message {
       }
     })
     .register("markMessageAsSeen", z.string(), async (tx, input) => {
-      const currentMessage = await tx.get<Message.Info>(`messages/${input}`);
+      const currentMessage = (await tx.get<Message.Info>(
+        `messages/${input}`,
+      )) as Info | undefined;
+      if (!currentMessage) {
+        return;
+      }
       await tx.set(`messages/${input}`, {
         ...currentMessage,
         seen: true,
-      });
+      } satisfies Info);
     });
 
   export const queries = {

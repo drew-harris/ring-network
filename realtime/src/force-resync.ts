@@ -19,10 +19,6 @@ export const forceResync = async () => {
       version: nextVersion,
     });
 
-    await t.update(User_TB).set({
-      version: nextVersion,
-    });
-
     await updateServerVersion(t, nextVersion);
   });
 };

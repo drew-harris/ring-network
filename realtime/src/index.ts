@@ -16,6 +16,7 @@ import { createNodeWebSocket } from "@hono/node-ws";
 import { WSContext } from "hono/ws";
 import { getChangedMessages } from "./logic/message/getChanged";
 import { forceResync } from "./force-resync";
+import { getChangedInflight } from "./logic/inflight/getChanged";
 
 const app = new Hono();
 
@@ -73,10 +74,11 @@ app.post("/pull", async (c) => {
 
     const nodeOps = await getChangedNodes(tx, fromVersion);
     const messageOps = await getChangedMessages(tx, fromVersion);
+    const flightOps = await getChangedInflight(tx, fromVersion);
 
     return {
       cookie: serverVersion.version,
-      patch: [...nodeOps, ...messageOps],
+      patch: [...nodeOps, ...messageOps, ...flightOps],
       lastMutationIDChanges: lastMutationIDChanges,
     } satisfies PullResponseV1;
   });

@@ -26,11 +26,18 @@ export const Message_TB = pgTable("messages", {
   }).notNull(),
   path: text("path").array().notNull(),
   status: text("status", {
-    enum: ["Created", "Delivered", "Undelivered"],
+    enum: [
+      "Created",
+      "OnRoute",
+      "Delivered",
+      "NotDelivered-InboxFull",
+      "NotDelivered-NodeInactive",
+      "NotDelivered-NodeNotFound",
+    ],
   }).notNull(),
   seen: boolean("seen").notNull().default(false),
   placement: text("placement", {
-    enum: ["node", "archive", "undelivered"],
+    enum: ["node", "system-buffer", "undelivered"],
   }).notNull(),
   // Replicache values
   deleted: boolean("deleted").default(false),
@@ -40,6 +47,9 @@ export const Message_TB = pgTable("messages", {
 export const InFlight_TB = pgTable("in_flight", {
   messageId: text("messageId").primaryKey(),
   position: text("position").notNull(),
+  color: text("color"),
+  deleted: boolean("deleted").default(false),
+  version: integer("version").notNull(),
 });
 
 export const User_TB = pgTable("users", {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Mutations } from "./utils";
 import { ReadTransaction, WriteTransaction } from "replicache";
+
 export module Node {
   export const Info = z.object({
     label: z.string(),

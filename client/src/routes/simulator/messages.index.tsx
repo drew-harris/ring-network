@@ -6,7 +6,7 @@ import { MessageTableActions } from "@/components/messages/MessageTableActions";
 import { RealtimeClientContext } from "@/main";
 import { createFileRoute } from "@tanstack/react-router";
 import { Message } from "core/message";
-import { Archive, Ban, Check } from "lucide-react";
+import { Archive, Check } from "lucide-react";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useSubscribe } from "replicache-react";
 
@@ -16,8 +16,8 @@ export const Route = createFileRoute("/simulator/messages/")({
       regular: await context.replicache.query(
         async (tx) => await Message.queries.getAllMessages(tx, "node"),
       ),
-      archive: await context.replicache.query(
-        async (tx) => await Message.queries.getAllMessages(tx, "archive"),
+      systemBuffer: await context.replicache.query(
+        async (tx) => await Message.queries.getAllMessages(tx, "system-buffer"),
       ),
       undelivered: await context.replicache.query(
         async (tx) => await Message.queries.getAllMessages(tx, "undelivered"),
@@ -39,19 +39,11 @@ function MessageTablePage() {
     },
   );
 
-  const archive = useSubscribe(
+  const systemBuffer = useSubscribe(
     r,
-    (tx) => Message.queries.getAllMessages(tx, "archive"),
+    (tx) => Message.queries.getAllMessages(tx, "system-buffer"),
     {
-      default: loadedData.archive,
-    },
-  );
-
-  const undelivered = useSubscribe(
-    r,
-    (tx) => Message.queries.getAllMessages(tx, "undelivered"),
-    {
-      default: loadedData.undelivered,
+      default: loadedData.systemBuffer,
     },
   );
 
@@ -59,11 +51,7 @@ function MessageTablePage() {
     Record<string, boolean>
   >({});
 
-  const [archivedSelected, setArchivedSelected] = useState<
-    Record<string, boolean>
-  >({});
-
-  const [undeliveredSelected, setUndeliveredSelected] = useState<
+  const [systemBufferSelected, setSystemBufferSelected] = useState<
     Record<string, boolean>
   >({});
 
@@ -132,29 +120,16 @@ function MessageTablePage() {
         allowArchive
       />
       <PageSection
-        title="Undelivered"
-        icon={
-          <Ban
-            className=" text-neutral-800 dark:text-neutral-300"
-            size={20}
-          ></Ban>
-        }
-        data={undelivered}
-        selected={undeliveredSelected}
-        setSelected={setUndeliveredSelected}
-        allowArchive
-      />
-      <PageSection
-        title="Archived"
+        title="System Buffer"
         icon={
           <Archive
             className="text-neutral-800 dark:text-neutral-300"
             size={20}
           ></Archive>
         }
-        data={archive}
-        selected={archivedSelected}
-        setSelected={setArchivedSelected}
+        data={systemBuffer}
+        selected={systemBufferSelected}
+        setSelected={setSystemBufferSelected}
       />
     </div>
   );

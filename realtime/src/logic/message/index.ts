@@ -3,7 +3,6 @@ import { Message_TB } from "../../schema";
 import { eq, inArray } from "drizzle-orm";
 import { Transaction } from "../../db";
 import { Message } from "core/message";
-import { getNodeById } from "../node";
 
 const getMessageById = async (tx: Transaction, messageId: string) => {
   const message = await tx
@@ -23,41 +22,36 @@ export const messageServerMutations: ServerMutations<
   (typeof Message)["mutations"]
 > = {
   sendMessage: async (tx, input, version) => {
-    const node = await getNodeById(tx, input.senderId);
-    if (!node || node.status === "inactive") {
-      await tx.insert(Message_TB).values([
-        {
-          ...input,
-          path: [input.senderId, input.reciverId],
-          status: "Undelivered",
-          placement: "undelivered",
-          seen: false,
-          receivedAt: null,
-          version: version,
-          deleted: false,
-        },
-      ]);
-    } else {
-      await tx.insert(Message_TB).values([
-        {
-          ...input,
-          path: [input.senderId, input.reciverId],
-          status: "Created",
-          receivedAt: null,
-          placement: "node",
-          seen: false,
-          version: version,
-          deleted: false,
-        },
-      ]);
-    }
+    await tx.insert(Message_TB).values([
+      {
+        ...input,
+        path: [input.senderId, input.reciverId],
+        status: "Created",
+        receivedAt: null,
+        placement: "node",
+        seen: false,
+        version: version,
+        deleted: false,
+      },
+    ]);
+  },
+
+  failSend: async (tx, input, version) => {
+    await tx
+      .update(Message_TB)
+      .set({
+        placement: "system-buffer",
+        status: `NotDelivered-${input.reason}`,
+        version,
+      })
+      .where(eq(Message_TB.messageId, input.messageId));
   },
 
   archiveMessages: async (tx, input, version) => {
     await tx
       .update(Message_TB)
       .set({
-        placement: "system_buffer",
+        placement: "system-buffer",
         version,
       })
       .where(inArray(Message_TB.messageId, input));

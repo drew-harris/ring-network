@@ -2,10 +2,12 @@ import { MutationV1 } from "replicache";
 import { Transaction } from "../db";
 import { nodeServerMutations } from "./node";
 import { messageServerMutations } from "./message";
+import { inflightServerMutations } from "./inflight";
 
 const allMutations = {
   ...nodeServerMutations,
   ...messageServerMutations,
+  ...inflightServerMutations,
 };
 
 export const handleMutation = async (
