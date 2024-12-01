@@ -30,7 +30,7 @@ export const Message_TB = pgTable("messages", {
   }).notNull(),
   seen: boolean("seen").notNull().default(false),
   placement: text("placement", {
-    enum: ["node", "system_buffer", "undelivered"],
+    enum: ["node", "archive", "undelivered"],
   }).notNull(),
   // Replicache values
   deleted: boolean("deleted").default(false),

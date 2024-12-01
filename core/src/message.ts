@@ -12,7 +12,7 @@ export module Message {
     reciverId: z.string(),
     message: z.string(),
     createdAt: z.string(),
-    receivedAt: z.string(),
+    receivedAt: z.string().nullable(),
     direction: z.enum(["left", "right"]),
     path: z.array(z.string()),
     status: z.enum(["Created", "Delivered", "Undelivered"]), // TODO: Update

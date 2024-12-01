@@ -18,11 +18,11 @@ export module User {
 
   // API Key
   // @ts-ignore
-  const API_KEY = import.meta.env.VITE_PUBLIC_JAVA_BACKEND_URL!;
+  const API_PATH = import.meta.env.VITE_PUBLIC_JAVA_BACKEND_URL!;
 
   export const Api = {
     getAllUsers: async () => {
-      const response = await fetch(API_KEY + "/users", {
+      const response = await fetch(API_PATH + "/users", {
         headers: {
           Accept: "application/json",
         },
@@ -36,7 +36,7 @@ export module User {
     },
 
     deleteUser: async (userId: string) => {
-      const response = await fetch(API_KEY + `/users/${userId}`, {
+      const response = await fetch(API_PATH + `/users/${userId}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -49,7 +49,7 @@ export module User {
     },
 
     createUser: async (params: { user: Info; password: string }) => {
-      const response = await fetch(API_KEY + "/users", {
+      const response = await fetch(API_PATH + "/users", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -70,7 +70,7 @@ export module User {
 
     updatePassword: async (params: { userId: string; password: string }) => {
       const response = await fetch(
-        API_KEY + `/users/${params.userId}/password`,
+        API_PATH + `/users/${params.userId}/password`,
         {
           method: "POST",
           headers: {
@@ -87,7 +87,7 @@ export module User {
     },
 
     login: async (username: string, password: string) => {
-      const response = await fetch(API_KEY + `/users/login`, {
+      const response = await fetch(API_PATH + `/users/login`, {
         method: "POST",
         headers: {
           Accept: "application/json",
