@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "source .env && mvn spring-boot:run"
+    "dev-old": "source .env && mvn spring-boot:run",
+    "dev": "echo skipping java"
   },
   "devDependencies": {
     "@types/bun": "latest"

@@ -102,8 +102,8 @@ export const Flight = ({
     const nodeIndex = nodes.findIndex((n) => n.nodeId === nodePosition);
     const angle = (nodeIndex * Math.PI * 2) / totalNodes;
     return {
-      x: Math.round(width / 2 + radius * Math.cos(angle)),
-      y: Math.round(height / 2 + radius * Math.sin(angle)),
+      x: Math.round(width / 2 + radius * Math.cos(angle)) + nodeWidth / 2,
+      y: Math.round(height / 2 + radius * Math.sin(angle)) + nodeHeight / 2,
     };
   }, [nodePosition, nodes, width, height, radius, totalNodes]);
 
@@ -121,15 +121,10 @@ export const Flight = ({
       initial={position}
       animate={position}
       transition={{
-        type: "spring",
-        damping: 25,
-        stiffness: 120,
-        mass: 1,
+        duration: 0.4,
       }}
-      className="w-24 z-50 h-24 rounded-full bg-blue-400"
-      style={{ position: "absolute", top: 0, left: 0 }}
-    >
-      {messageId}
-    </motion.div>
+      className="w-4 h-4 rounded-full bg-blue-400"
+      style={{ position: "absolute" }}
+    ></motion.div>
   );
 };

@@ -1,31 +1,8 @@
-import { z, ZodSchema } from "core/zod";
-import { Job, JobFn } from ".";
+import { createJobFn } from "@/queue";
+import { InFlight } from "core/inflight";
 import { Message } from "core/message";
 import { Node } from "core/node";
-import { InFlight } from "core/inflight";
-
-export const createJobFn = <
-  Arg1 extends ZodSchema,
-  Callback extends JobFn<z.output<Arg1>>,
->(
-  arg1: Arg1,
-  cb: Callback,
-): ((data: z.output<Arg1>) => Job<z.output<Arg1>>) => {
-  return (data: z.input<Arg1>) => {
-    return {
-      data,
-      run: async (params) => {
-        return await cb.apply(cb, [
-          {
-            params: data,
-            queue: params.queue,
-            replicache: params.replicache,
-          },
-        ]);
-      },
-    };
-  };
-};
+import { z } from "core/zod";
 
 export const moveInFlight = createJobFn(
   z.object({
@@ -41,6 +18,30 @@ export const moveInFlight = createJobFn(
       messageId: params.messageId,
       position: params.newPosition,
     });
+
+    await replicache.mutate.pushPath({
+      messageId: params.messageId,
+      newPosition: params.newPosition,
+    });
+
+    // Add the process job to the queue
+    await queue.add(
+      handleMessagePosUpdate({
+        messageId: params.messageId,
+      }),
+    );
+  },
+);
+
+const successfulDelivery = createJobFn(
+  z.object({
+    messageId: z.string(),
+  }),
+  async ({ params, replicache, queue }) => {
+    const message = await Message.getById(replicache, params.messageId);
+    if (!message) {
+      return;
+    }
 
     // Add the process job to the queue
     await queue.add(
@@ -79,10 +80,25 @@ export const handleMessagePosUpdate = createJobFn(
     }
 
     let nextDestination: string | null = null;
+
     if (message.direction === "left") {
       nextDestination = sittingOnNode.rightNeighbor;
     } else {
       nextDestination = sittingOnNode.leftNeighbor;
+    }
+
+    let nextNode = await Node.getById(replicache, nextDestination);
+
+    // Success
+    // if (nextDestination === message.reciverId) {
+    // }
+
+    // Already looped around once
+    if (nextDestination === message.senderId) {
+      replicache.mutate.failSend({
+        messageId: params.messageId,
+        reason: "NodeNotFound",
+      });
     }
 
     const result = await moveInFlight({
@@ -95,6 +111,7 @@ export const handleMessagePosUpdate = createJobFn(
 export const createMessageJob = createJobFn(
   Message.schemas.createMessage,
   async ({ params, replicache, queue }) => {
+    // Adds the sender to the path anyways
     await replicache.mutate.sendMessage(params);
     await replicache.mutate.createInFlight({
       position: params.senderId,

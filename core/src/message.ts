@@ -81,10 +81,31 @@ export module Message {
         if (!currentMessage) {
           return;
         }
+        await tx.del(`in_flight/${input.messageId}`);
         return await tx.set(`messages/${input.messageId}`, {
           ...currentMessage,
           placement: "system-buffer",
           status: `NotDelivered-${input.reason}`,
+        } satisfies Info);
+      },
+    )
+
+    .register(
+      "pushPath",
+      z.object({
+        messageId: z.string(),
+        newPosition: z.string(),
+      }),
+      async (tx, input) => {
+        const currentMessage = (await tx.get<Info>(
+          `messages/${input.messageId}`,
+        )) as Info | undefined;
+        if (!currentMessage) {
+          return;
+        }
+        return await tx.set(`messages/${input}`, {
+          ...currentMessage,
+          path: [...currentMessage.path, input.newPosition],
         } satisfies Info);
       },
     )
@@ -99,13 +120,16 @@ export module Message {
     })
     .register("archiveMessages", z.array(z.string()), async (tx, input) => {
       for (const messageId of input) {
-        const currentMessage = await tx.get<Message.Info>(
-          `messages/${messageId}`,
-        );
+        const currentMessage = (await tx.get<Info>(`messages/${messageId}`)) as
+          | Info
+          | undefined;
+        if (!currentMessage) {
+          return;
+        }
         await tx.set(`messages/${messageId}`, {
           ...currentMessage,
-          placement: "archive",
-        });
+          placement: "system-buffer",
+        } satisfies Info);
       }
     })
     .register("markMessageAsSeen", z.string(), async (tx, input) => {

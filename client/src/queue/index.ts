@@ -1,4 +1,28 @@
 import { RealtimeClient } from "@/main";
+import { z, ZodSchema } from "core/zod";
+
+export const createJobFn = <
+  Arg1 extends ZodSchema,
+  Callback extends JobFn<z.output<Arg1>>,
+>(
+  _arg1: Arg1,
+  cb: Callback,
+): ((data: z.output<Arg1>) => Job<z.output<Arg1>>) => {
+  return (data: z.input<Arg1>) => {
+    return {
+      data,
+      run: async (params) => {
+        return await cb.apply(cb, [
+          {
+            params: data,
+            queue: params.queue,
+            replicache: params.replicache,
+          },
+        ]);
+      },
+    };
+  };
+};
 
 export type Job<P> = {
   data: P;
@@ -51,7 +75,7 @@ export class JobQueue {
         }
 
         await new Promise((resolve) =>
-          setTimeout(resolve, 100 / this.queue.length),
+          setTimeout(resolve, this.delay / this.queue.length),
         );
       }
     }

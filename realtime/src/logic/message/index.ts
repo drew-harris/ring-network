@@ -1,6 +1,6 @@
 import { ServerMutations } from "../../server-mutation";
-import { Message_TB } from "../../schema";
-import { eq, inArray } from "drizzle-orm";
+import { InFlight_TB, Message_TB } from "../../schema";
+import { eq, inArray, sql } from "drizzle-orm";
 import { Transaction } from "../../db";
 import { Message } from "core/message";
 
@@ -45,6 +45,20 @@ export const messageServerMutations: ServerMutations<
         version,
       })
       .where(eq(Message_TB.messageId, input.messageId));
+
+    await tx
+      .delete(InFlight_TB)
+      .where(eq(InFlight_TB.messageId, input.messageId));
+  },
+
+  pushPath: async (tx, input, version) => {
+    await tx
+      .update(Message_TB)
+      .set({
+        path: sql`array_append(${Message_TB.path}, ${input})`,
+        version,
+      })
+      .where(eq(Message_TB.messageId, input));
   },
 
   archiveMessages: async (tx, input, version) => {
