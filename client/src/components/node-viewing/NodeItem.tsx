@@ -1,14 +1,9 @@
-import {
-  animate,
-  AnimatePresence,
-  motion,
-  useMotionValue,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { Node } from "core/node";
 import { cn } from "@/lib/utils";
 import { useSelectedNode } from "@/stores/selectedNode";
 import { InFlight } from "core/inflight";
-import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { RealtimeClientContext } from "@/main";
 import { useSubscribe } from "replicache-react";
 
