@@ -8,4 +8,4 @@ def sql [query: string] {
 sql "select * from nodes"
 
 #@ dev
-pnpm run dev
+zsh -ilc 'pnpm run dev'
