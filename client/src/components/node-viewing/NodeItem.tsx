@@ -115,9 +115,7 @@ export const Flight = ({
       layoutId={messageId}
       initial={position}
       animate={position}
-      transition={{
-        duration: 0.4,
-      }}
+      transition={{ duration: 0.1 }}
       className="w-4 h-4 rounded-full bg-blue-400"
       style={{ position: "absolute" }}
     ></motion.div>

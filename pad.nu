@@ -8,4 +8,9 @@ def sql [query: string] {
 sql "select * from nodes"
 
 #@ dev
-zsh -ilc 'pnpm run dev'
+loop {
+    zsh -ilc 'pnpm run dev'
+    sleep 1sec
+}
+
+

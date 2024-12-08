@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UserContextProvider } from "./stores/userStore";
 
 import { createRoot } from "react-dom/client";
 import { Replicache } from "replicache";
@@ -9,17 +10,12 @@ import { Message } from "core/message";
 import { Mutations } from "core/utils";
 import "./index.css";
 
-import { routeTree } from "./routeTree.gen";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
 import { nanoid } from "nanoid";
 import { createJobQueue, JobQueue } from "./queue";
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { InnerApp } from "./inner-app";
+import { routeTree } from "./routeTree.gen";
+import { createRouter } from "@tanstack/react-router";
 
 const getOrCreateName = () => {
   const name = localStorage.getItem("name");
@@ -73,23 +69,34 @@ export type RealtimeClient = typeof rep;
 
 const queryClient = new QueryClient();
 
+export const RealtimeClientContext = React.createContext<RealtimeClient>(rep);
+
+export const QueueContext = React.createContext<JobQueue>(jobQueue);
+
 const router = createRouter({
   routeTree,
   context: {
     replicache: rep,
+    auth: undefined!,
   },
 });
 
-export const RealtimeClientContext = React.createContext<RealtimeClient>(rep);
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
-export const QueueContext = React.createContext<JobQueue>(jobQueue);
+export type RouterType = typeof router;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RealtimeClientContext.Provider value={rep}>
         <QueueContext.Provider value={jobQueue}>
-          <RouterProvider context={{ replicache: rep }} router={router} />
+          <UserContextProvider>
+            <InnerApp router={router} rep={rep} />
+          </UserContextProvider>
         </QueueContext.Provider>
       </RealtimeClientContext.Provider>
     </QueryClientProvider>

@@ -1,10 +1,15 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  loader() {
-    throw redirect({
-      to: "/simulator",
-    });
+  beforeLoad({ context }) {
+    if (context.auth.user) {
+      return redirect({
+        to: "/simulator",
+      });
+    } else
+      return redirect({
+        to: "/login",
+      });
   },
   component: () => (
     <div className="p-8">

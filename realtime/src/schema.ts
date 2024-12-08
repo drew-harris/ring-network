@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, integer } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, integer, date } from "drizzle-orm/pg-core";
 
 export const Node_TB = pgTable("nodes", {
   nodeId: text("nodeId").primaryKey(),
@@ -78,4 +78,10 @@ export const Client_TB = pgTable("realtime_client", {
   clientGroup: text("client_group_id"),
   lastMutation: integer("last_mutation").notNull(),
   version: integer("version").notNull(),
+});
+
+export const ResetCode_TB = pgTable("reset_code", {
+  code: text("code").primaryKey(),
+  email: text("email").notNull(),
+  createdAt: date("created_at").notNull().defaultNow(),
 });

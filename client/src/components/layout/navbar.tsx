@@ -4,10 +4,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UserContext } from "@/stores/userStore";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useContext } from "react";
 
 export const Navbar = () => {
   const router = useRouterState();
+
+  const auth = useContext(UserContext);
   const navigate = useNavigate();
   return (
     <div>
@@ -33,7 +37,7 @@ export const Navbar = () => {
             </div>
           </PopoverTrigger>
           <PopoverContent className="w-40">
-            <div className="text-sm pb-2 text-center">drewh</div>
+            <div className="text-sm pb-2 text-center">{auth.user?.name}</div>
             <Link
               to="/userinfo"
               className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"

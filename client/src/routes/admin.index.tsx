@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import {
@@ -23,8 +23,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Api } from "@/hono";
 
 export const Route = createFileRoute("/admin/")({
+  beforeLoad({ context }) {
+    if (!(context.auth.user?.type === "admin")) {
+      return redirect({
+        to: "/simulator",
+      });
+    }
+  },
   component: AdminPage,
 });
 
@@ -51,7 +59,7 @@ function AdminPage() {
   const queryUtils = useQueryClient();
 
   const deleteUserMutation = useMutation({
-    mutationFn: User.Api.deleteUser,
+    mutationFn: Api.deleteUser,
     onMutate(userId) {
       queryUtils.setQueryData(["users"], (oldData: User.Info[]) => {
         if (!oldData) {
@@ -68,7 +76,7 @@ function AdminPage() {
   });
 
   const addUserMutation = useMutation({
-    mutationFn: User.Api.createUser,
+    mutationFn: Api.createUser,
     onMutate(variables) {
       queryUtils.setQueryData(["users"], (oldData: User.Info[]) => {
         if (!oldData) {
@@ -100,7 +108,7 @@ function AdminPage() {
 
   const users = useQuery({
     queryKey: ["users"],
-    queryFn: User.Api.getAllUsers,
+    queryFn: Api.getAllUsers,
   });
 
   return (

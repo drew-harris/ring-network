@@ -17,6 +17,7 @@ import { WSContext } from "hono/ws";
 import { getChangedMessages } from "./logic/message/getChanged";
 import { forceResync } from "./force-resync";
 import { getChangedInflight } from "./logic/inflight/getChanged";
+import { authRouter } from "./email";
 
 const app = new Hono();
 
@@ -125,6 +126,8 @@ app.get("/resync", async (c) => {
   await forceResync();
   return c.json({ done: true });
 });
+
+app.route("/auth", authRouter);
 
 const port = 3000;
 console.log(`Server is running on port ${port}`);
