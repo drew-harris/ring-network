@@ -26,14 +26,7 @@ export default tseslint.config(
       "@typescript-eslint/prefer-namespace-keyword": "off",
       "@typescript-eslint/no-namespace": "off",
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "warn", // or "error"
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
-      ],
+      "@typescript-eslint/no-unused-vars": "off",
     },
   },
 );

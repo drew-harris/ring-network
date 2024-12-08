@@ -4,7 +4,7 @@ import { AuthRouterType } from "realtime/email";
 
 const TS_PATH = import.meta.env.VITE_PUBLIC_BACKEND_URL!;
 
-export const client = hc<AuthRouterType>(TS_PATH + "/");
+export const client = hc<AuthRouterType>(TS_PATH + "/auth/");
 
 const API_PATH = import.meta.env.VITE_PUBLIC_JAVA_BACKEND_URL!;
 
@@ -52,6 +52,12 @@ export const Api = {
     if (!response.ok) {
       throw new Error("Failed to create user");
     }
+
+    const _ = await client.email.$post({
+      json: {
+        email: params.user.email,
+      },
+    });
 
     const sendCodeResponse = await fetch(TS_PATH + "/auth/email", {
       body: JSON.stringify({

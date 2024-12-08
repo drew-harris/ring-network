@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { AuthRouterType } from "realtime/email";
-import { hc } from "hono/client";
 
 export module User {
   export const passwordSchema = z
@@ -17,7 +15,4 @@ export module User {
   export type Info = z.infer<typeof Info>;
 
   export const createId = () => `U-${Math.floor(Math.random() * 100000000)}`;
-
-  // API Key
-  // @ts-ignore
 }

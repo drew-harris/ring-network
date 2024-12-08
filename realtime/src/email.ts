@@ -28,7 +28,10 @@ const codeGenerator = customAlphabet(
 
 type ParseType = "json" | "param" | "query";
 
-const createValidator = <T extends ZodSchema>(type: ParseType, schema: T) => {
+const validate = <T extends ZodSchema, Z extends ParseType>(
+  type: Z,
+  schema: T,
+) => {
   return validator(type, (value, ctx): z.infer<T> => {
     const result = schema.safeParse(value);
     if (!result.success) {
@@ -46,8 +49,8 @@ const createValidator = <T extends ZodSchema>(type: ParseType, schema: T) => {
 };
 
 const authRouter = new Hono()
-  .post("/email", createValidator("json", confirmSchema), async (c) => {
-    return createTransaction(async (tx) => {
+  .post("/email", validate("json", confirmSchema), async (c) => {
+    const result = await createTransaction(async (tx) => {
       const data = c.req.valid("json");
 
       const code = codeGenerator();
@@ -83,11 +86,15 @@ Your current password is ${codeGenerator()}
 Visit ${frontendUrl}/reset?code=${code} to reset your password.
 `,
       });
+
+      return code;
     });
+
+    return c.json({ code: result });
   })
   .get(
     "/code",
-    createValidator("query", z.object({ code: z.string() })),
+    validate("query", z.object({ code: z.string() })),
     async (c) => {
       const data = c.req.query("code");
       if (!data) {
