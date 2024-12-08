@@ -1,19 +1,11 @@
 import { useContainerDimensions } from "@/lib/containerSize";
 import { Node } from "core/node";
-import {
-  RefObject,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useContext, useMemo, useRef, useState } from "react";
 import { Flight, NodeItem } from "./NodeItem";
 import { NodeLines } from "@/components/node-viewing/NodeLines";
 import { RealtimeClientContext } from "@/main";
 import { useSubscribe } from "replicache-react";
 import { InFlight } from "core/inflight";
-import { useSelectedNode } from "@/stores/selectedNode";
 import { UserContext } from "@/stores/userStore";
 import { Input } from "../ui/input";
 
@@ -26,8 +18,8 @@ interface NodeViewProps {
 export const NodeView = (props: NodeViewProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerDimensions(props.containerRef);
-  // const [scale, _] = useState(0.74);
   const scale = 0.75;
+
   const radius = useMemo(
     () => (Math.min(width, height) / 2) * scale,
     [scale, height, width],
@@ -90,10 +82,6 @@ export const NodeView = (props: NodeViewProps) => {
 
 const InboxSizeManager = () => {
   const [inboxSize, setInboxSize] = useState(20);
-  const [size, setSize] = useSelectedNode((s) => [
-    s.defaultInboxSize,
-    s.setDefaultInboxSize,
-  ]);
 
   const userCtx = useContext(UserContext);
   if (userCtx.user?.type !== "admin") {

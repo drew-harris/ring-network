@@ -19,11 +19,6 @@ const transporter = createTransport({
   },
 });
 
-const confirmSchema = z.object({
-  email: z.string().email(),
-});
-const codeGenerator = customAlphabet("12349adrsuwyxz$%#@&", 10);
-
 type ParseType = "json" | "param" | "query";
 
 const validate = <T extends ZodSchema, Z extends ParseType>(
