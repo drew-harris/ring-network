@@ -64,7 +64,7 @@ export const NodeItem = ({
 };
 
 type FlightProps = {
-  messageId: string;
+  flight: InFlight.Info;
   nodes: Node.Info[];
   width: number;
   height: number;
@@ -80,7 +80,7 @@ export const Flight = ({
   nodes,
   width,
   height,
-  messageId,
+  flight,
   defaultPosition,
   radius,
   totalNodes,
@@ -88,14 +88,14 @@ export const Flight = ({
   const r = useContext(RealtimeClientContext);
   const nodePosition = useSubscribe(
     r,
-    (tx) => InFlight.queries.getFlightPosition(tx, messageId),
+    (tx) => InFlight.queries.getFlightPosition(tx, flight.messageId),
     {
       default: defaultPosition,
     },
   );
 
   const color = useSubscribe(r, async (tx) => {
-    const color = await InFlight.queries.getColor(tx, messageId);
+    const color = await InFlight.queries.getColor(tx, flight.messageId);
     return color;
   });
 
@@ -117,13 +117,16 @@ export const Flight = ({
 
   return (
     <motion.div
-      key={messageId} // Only use messageId as key
-      layoutId={messageId}
+      key={flight.messageId} // Only use messageId as key
+      layoutId={flight.messageId}
       initial={position}
       animate={position}
       transition={{ duration: 0.9 }}
-      className="w-4 h-4 z-40 rounded-full"
-      style={{ position: "absolute", backgroundColor: color }}
+      className="w-4 h-4 rounded-full"
+      style={{
+        position: "absolute",
+        backgroundColor: flight.color || "#00aaff",
+      }}
     ></motion.div>
   );
 };

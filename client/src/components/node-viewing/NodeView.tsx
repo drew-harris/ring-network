@@ -15,7 +15,6 @@ import { useSubscribe } from "replicache-react";
 import { InFlight } from "core/inflight";
 import { useSelectedNode } from "@/stores/selectedNode";
 import { UserContext } from "@/stores/userStore";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 interface NodeViewProps {
@@ -39,75 +38,53 @@ export const NodeView = (props: NodeViewProps) => {
 
   const r = useContext(RealtimeClientContext);
 
-  // const flightIds = useSubscribe(r, InFlight.queries.getAllFlightIds, {
-  //   default: props.defaultFlights.map((f) => f.messageId),
-  // });
-
-  useEffect(() => {
-    const cleanup = r.subscribe(
-      InFlight.queries.getAllFlightIds,
-      (flightIds) => {
-        console.log("flightIds", flightIds);
-        const oldFlightIds = flightIds;
-        // Sort and compare to prevent rerenders
-        for (let i = 0; i < oldFlightIds.length; i++) {
-          if (oldFlightIds[i] !== flightIds[i]) {
-            break;
-          }
-        }
-        setFlightIds(oldFlightIds.sort());
-      },
-    );
-    return cleanup;
-  }, []);
-
-  const [flightIds, setFlightIds] = useState(
-    props.defaultFlights.map((f) => f.messageId),
-  );
+  const flightIds = useSubscribe(r, InFlight.queries.getAllFlights, {
+    default: props.defaultFlights.map((f) => f),
+  });
 
   return (
-    <div className="min-h-full relative h-full" ref={componentRef}>
-      {isInitialized ? (
-        <>
-          <NodeLines
-            nodes={props.nodes}
-            width={width}
-            height={height}
-            radius={radius}
-          />
-          {flightIds.map((fid) => (
-            <Flight
-              key={fid}
-              messageId={fid}
-              defaultPosition={
-                props.defaultFlights.find((f) => f.messageId === fid)?.position
-              }
+    <>
+      <div className="min-h-full relative h-full" ref={componentRef}>
+        {isInitialized ? (
+          <>
+            <NodeLines
               nodes={props.nodes}
               width={width}
               height={height}
               radius={radius}
-              totalNodes={props.nodes.length}
             />
-          ))}
-          {props.nodes.map(
-            (node, index) =>
-              node.nodeId && (
-                <NodeItem
-                  key={node.nodeId}
-                  node={node}
-                  index={index}
-                  width={width}
-                  height={height}
-                  radius={radius}
-                  totalNodes={props.nodes.length}
-                />
-              ),
-          )}
+            {flightIds.map((fid) => (
+              <Flight
+                flight={fid}
+                key={fid.messageId}
+                defaultPosition={fid.position}
+                nodes={props.nodes}
+                width={width}
+                height={height}
+                radius={radius}
+                totalNodes={props.nodes.length}
+              />
+            ))}
+            {props.nodes.map(
+              (node, index) =>
+                node.nodeId && (
+                  <NodeItem
+                    key={node.nodeId}
+                    node={node}
+                    index={index}
+                    width={width}
+                    height={height}
+                    radius={radius}
+                    totalNodes={props.nodes.length}
+                  />
+                ),
+            )}
 
-          <InboxSizeManager />
-        </>
-      ) : null}
-    </div>
+            <InboxSizeManager />
+          </>
+        ) : null}
+      </div>
+    </>
   );
 };
 

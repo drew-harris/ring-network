@@ -33,22 +33,6 @@ export const moveInFlight = createJobFn(
   },
 );
 
-const cleanupFlight = createJobFn(
-  z.object({
-    messageId: z.string(),
-  }),
-  async ({ params, replicache, queue }) => {
-    const flight = await InFlight.getById(replicache, params.messageId);
-    if (!flight) {
-      return;
-    }
-
-    await replicache.mutate.deleteInFlight({
-      messageId: params.messageId,
-    });
-  },
-);
-
 const successfulDelivery = createJobFn(
   z.object({
     messageId: z.string(),

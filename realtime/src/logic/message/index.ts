@@ -47,7 +47,11 @@ export const messageServerMutations: ServerMutations<
       .where(eq(Message_TB.messageId, input.messageId));
 
     await tx
-      .delete(InFlight_TB)
+      .update(InFlight_TB)
+      .set({
+        deleted: true,
+        version,
+      })
       .where(eq(InFlight_TB.messageId, input.messageId));
   },
 
@@ -83,7 +87,7 @@ export const messageServerMutations: ServerMutations<
     await tx
       .update(Message_TB)
       .set({
-        path: sql`array_append(${Message_TB.path}, ${input})`,
+        path: sql`array_append(${Message_TB.path}, ${input.newPosition})`,
         version,
       })
       .where(eq(Message_TB.messageId, input.messageId));

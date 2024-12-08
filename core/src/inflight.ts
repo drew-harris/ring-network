@@ -77,7 +77,7 @@ export module InFlight {
       return flight?.color;
     },
 
-    getAllFlightIds: async (tx: ReadTransaction) => {
+    getAllFlights: async (tx: ReadTransaction) => {
       const messages = await tx
         .scan<Info>({
           prefix: "in_flight",
@@ -85,8 +85,8 @@ export module InFlight {
         .values()
         .toArray();
       return messages
-        .map((m) => m.messageId)
-        .sort((a, b) => a.localeCompare(b));
+        .map((m) => m)
+        .sort((a, b) => a.messageId.localeCompare(b.messageId));
     },
 
     getFlightsForNode: async (tx: ReadTransaction, nodeId: string) => {
