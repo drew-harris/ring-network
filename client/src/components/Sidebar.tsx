@@ -4,8 +4,9 @@ import { IconButton } from "@/components/ui/iconbutton";
 import { Separator } from "@/components/ui/separator";
 import { RealtimeClientContext } from "@/main";
 import { useSelectedNode } from "@/stores/selectedNode";
+import { UserContext } from "@/stores/userStore";
 import { Node } from "core/node";
-import { Power, Trash } from "lucide-react";
+import { Minus, Plus, Power, Trash } from "lucide-react";
 import { useContext } from "react";
 import { useSubscribe } from "replicache-react";
 
@@ -24,6 +25,7 @@ export const Sidebar = (props: SidebarProps) => {
   );
 
   const sel = useSelectedNode();
+  const userCtx = useContext(UserContext);
 
   const totalNodeCount = useSubscribe(r, Node.queries.totalNodeCount, {
     default: 0,
@@ -32,17 +34,22 @@ export const Sidebar = (props: SidebarProps) => {
   if (!data) {
     return null;
   }
+
+  if (!userCtx.user) {
+    return null;
+  }
+
   return (
     <div>
-      <div className="text-lg font-bold">{data.label}</div>
+      <div className="text-lg font-bold">
+        {data.label} (Inbox Size: {data.inboxSize})
+      </div>
       <div className="flex gap-2 w-full">
-        {data.label !== "N-1" && (
+        {data.label !== "N1" && (
           <IconButton
             disabled={totalNodeCount <= 3}
             label="Delete"
             onClick={() => {
-              // Unselect the node
-              // sel.clearSelectedNode();
               sel.setSelectedNode(data.leftNeighbor);
               r.mutate.deleteNode(props.selectedNodeId);
             }}
@@ -50,14 +57,44 @@ export const Sidebar = (props: SidebarProps) => {
             <Trash size={14} />
           </IconButton>
         )}
-        <IconButton
-          label="Toggle Active"
-          onClick={() => {
-            r.mutate.toggleStatus(props.selectedNodeId);
-          }}
-        >
-          <Power size={14} />
-        </IconButton>
+
+        {userCtx.user.type === "admin" && (
+          <>
+            <IconButton
+              label="Toggle Active"
+              onClick={() => {
+                r.mutate.toggleStatus(props.selectedNodeId);
+              }}
+            >
+              <Power size={14} />
+            </IconButton>
+            <IconButton
+              label="Decrease Size"
+              disabled={data.inboxSize <= 1}
+              onClick={() => {
+                if (data.inboxSize > 0) {
+                  r.mutate.setInboxSize({
+                    nodeId: data.nodeId,
+                    inboxSize: data.inboxSize - 1,
+                  });
+                }
+              }}
+            >
+              <Minus size={14} />
+            </IconButton>
+            <IconButton
+              label="Increase Size"
+              onClick={() => {
+                r.mutate.setInboxSize({
+                  nodeId: data.nodeId,
+                  inboxSize: data.inboxSize + 1,
+                });
+              }}
+            >
+              <Plus size={14} />
+            </IconButton>
+          </>
+        )}
       </div>
       <Separator className="mt-4" />
       <SidebarSendForm nodeId={data.nodeId} />

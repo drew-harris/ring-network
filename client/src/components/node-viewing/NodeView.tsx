@@ -13,6 +13,10 @@ import { NodeLines } from "@/components/node-viewing/NodeLines";
 import { RealtimeClientContext } from "@/main";
 import { useSubscribe } from "replicache-react";
 import { InFlight } from "core/inflight";
+import { useSelectedNode } from "@/stores/selectedNode";
+import { UserContext } from "@/stores/userStore";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface NodeViewProps {
   nodes: Node.Info[];
@@ -99,8 +103,35 @@ export const NodeView = (props: NodeViewProps) => {
                 />
               ),
           )}
+
+          <InboxSizeManager />
         </>
       ) : null}
+    </div>
+  );
+};
+
+const InboxSizeManager = () => {
+  const [inboxSize, setInboxSize] = useState(20);
+  const [size, setSize] = useSelectedNode((s) => [
+    s.defaultInboxSize,
+    s.setDefaultInboxSize,
+  ]);
+
+  const userCtx = useContext(UserContext);
+  if (userCtx.user?.type !== "admin") {
+    return null;
+  }
+
+  return (
+    <div className="flex gap-2 absolute flex-col bottom-2 left-2">
+      <div className="text-sm">Default Inbox Size</div>
+      <Input
+        type="number"
+        value={inboxSize}
+        onChange={(e) => setInboxSize(parseInt(e.target.value))}
+        className="w-16 text-sm"
+      />
     </div>
   );
 };

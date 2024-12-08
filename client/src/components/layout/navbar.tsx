@@ -44,12 +44,14 @@ export const Navbar = () => {
             >
               Manage User
             </Link>
-            <Link
-              to="/admin"
-              className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
-            >
-              Admin
-            </Link>
+            {auth.user?.type === "admin" && (
+              <Link
+                to="/admin"
+                className="text-sm block dark:hover:bg-neutral-800 rounded-md py-1 font-semibold text-center w-full"
+              >
+                Admin
+              </Link>
+            )}
           </PopoverContent>
         </Popover>
       </div>

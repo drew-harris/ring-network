@@ -93,6 +93,12 @@ export const Flight = ({
       default: defaultPosition,
     },
   );
+
+  const color = useSubscribe(r, async (tx) => {
+    const color = await InFlight.queries.getColor(tx, messageId);
+    return color;
+  });
+
   const position = useMemo(() => {
     const nodeIndex = nodes.findIndex((n) => n.nodeId === nodePosition);
     const angle = (nodeIndex * Math.PI * 2) / totalNodes;
@@ -115,9 +121,9 @@ export const Flight = ({
       layoutId={messageId}
       initial={position}
       animate={position}
-      transition={{ duration: 0.1 }}
-      className="w-4 h-4 rounded-full bg-blue-400"
-      style={{ position: "absolute" }}
+      transition={{ duration: 0.9 }}
+      className="w-4 h-4 z-40 rounded-full"
+      style={{ position: "absolute", backgroundColor: color }}
     ></motion.div>
   );
 };

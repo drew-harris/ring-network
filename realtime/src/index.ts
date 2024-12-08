@@ -8,7 +8,6 @@ import {
   getLastMutationIdChanges,
   getServerVersion,
   processMutation,
-  reset,
 } from "./sync-utils";
 import { PullRequestV1, PullResponseV1, PushRequestV1 } from "replicache";
 import { getChangedNodes } from "./logic/node/getChanged";
@@ -18,6 +17,7 @@ import { getChangedMessages } from "./logic/message/getChanged";
 import { forceResync } from "./force-resync";
 import { getChangedInflight } from "./logic/inflight/getChanged";
 import { authRouter } from "./email";
+import { reset } from "./reset";
 
 const app = new Hono();
 

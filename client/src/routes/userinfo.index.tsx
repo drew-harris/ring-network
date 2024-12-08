@@ -1,30 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Api } from "@/hono";
+import { restrictPage } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { User } from "core/user";
-import { useState } from "react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useContext, useState } from "react";
 
 export const Route = createFileRoute("/userinfo/")({
+  beforeLoad: restrictPage,
+
+  loader(ctx) {
+    if (!ctx.context.auth.user) {
+      throw redirect({ to: "/login" });
+    }
+    return {
+      user: ctx.context.auth.user,
+    };
+  },
   component: UserInfoPage,
 });
 
 function UserInfoPage() {
+  const info = Route.useLoaderData();
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
 
   const updatePasswordMutation = useMutation({
-    mutationFn: User.Api.updatePassword,
+    mutationFn: Api.updatePassword,
   });
 
   const saveNewPassword = async () => {
-    // const result = User.passwordSchema.safeParse(newPassword);
-    // if (result.error) {
-    //   setNewPasswordError("Password must fufill requirements");
-    //   return;
-    // }
     updatePasswordMutation.mutate({
-      userId: "HSw2Ko4z",
+      userId: info.user.userId,
       password: newPassword,
     });
   };

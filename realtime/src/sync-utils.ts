@@ -1,6 +1,7 @@
 import { Node } from "core/node";
 import { Transaction } from "./db";
 import {
+  Auth_TB,
   Client_TB,
   InFlight_TB,
   Message_TB,
@@ -98,31 +99,6 @@ export const setLastMutationId = async (
       version,
     });
   }
-};
-
-export const reset = async (tx: Transaction) => {
-  await tx.delete(Node_TB);
-  await tx.delete(Message_TB);
-  await tx.delete(Server_TB);
-  await tx.delete(Client_TB);
-  await tx.delete(User_TB);
-  await tx.delete(InFlight_TB);
-
-  await tx.insert(Server_TB).values([
-    {
-      id: "server",
-      version: 1,
-    },
-  ]);
-
-  await tx.insert(Node_TB).values(
-    Node.getInitialState().map((n) => {
-      return {
-        ...n,
-        version: 1,
-      };
-    }),
-  );
 };
 
 export const processMutation = async (

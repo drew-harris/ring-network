@@ -20,6 +20,18 @@ export const getNodeById = async (tx: Transaction, nodeId: string) => {
 
 export const nodeServerMutations: ServerMutations<(typeof Node)["mutations"]> =
   {
+    setInboxSize: async (tx, input, nextVersion) => {
+      await tx
+        .update(Node_TB)
+        .set({
+          inboxSize: input.inboxSize,
+          version: nextVersion,
+        })
+        .where(eq(Node_TB.nodeId, input.nodeId));
+
+      return;
+    },
+
     deleteNode: async (tx, input, nextVersion) => {
       const nodeCount = await tx.select().from(Node_TB);
       if (nodeCount.length <= 3) {
@@ -134,6 +146,7 @@ export const nodeServerMutations: ServerMutations<(typeof Node)["mutations"]> =
           leftNeighbor: left.nodeId,
           rightNeighbor: left.rightNeighbor,
           status: "active",
+          inboxSize: input.inboxSize || 20,
           deleted: false,
           version: nextVersion,
         },

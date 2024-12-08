@@ -33,6 +33,22 @@ export const moveInFlight = createJobFn(
   },
 );
 
+const cleanupFlight = createJobFn(
+  z.object({
+    messageId: z.string(),
+  }),
+  async ({ params, replicache, queue }) => {
+    const flight = await InFlight.getById(replicache, params.messageId);
+    if (!flight) {
+      return;
+    }
+
+    await replicache.mutate.deleteInFlight({
+      messageId: params.messageId,
+    });
+  },
+);
+
 const successfulDelivery = createJobFn(
   z.object({
     messageId: z.string(),
@@ -43,12 +59,9 @@ const successfulDelivery = createJobFn(
       return;
     }
 
-    // Add the process job to the queue
-    await queue.add(
-      handleMessagePosUpdate({
-        messageId: params.messageId,
-      }),
-    );
+    replicache.mutate.successSend({
+      messageId: params.messageId,
+    });
   },
 );
 
@@ -75,6 +88,20 @@ export const handleMessagePosUpdate = createJobFn(
       currentPosition.position,
     );
 
+    if (sittingOnNode?.status === "inactive") {
+      return replicache.mutate.failSend({
+        messageId: params.messageId,
+        reason: "NodeInactive",
+      });
+    }
+
+    // Check if im there
+    if (sittingOnNode?.nodeId === message.reciverId) {
+      return await successfulDelivery({
+        messageId: params.messageId,
+      }).run({ replicache, queue });
+    }
+
     if (!sittingOnNode) {
       return;
     }
@@ -82,31 +109,42 @@ export const handleMessagePosUpdate = createJobFn(
     let nextDestination: string | null = null;
 
     if (message.direction === "left") {
-      nextDestination = sittingOnNode.rightNeighbor;
-    } else {
       nextDestination = sittingOnNode.leftNeighbor;
+    } else {
+      nextDestination = sittingOnNode.rightNeighbor;
     }
-
-    let nextNode = await Node.getById(replicache, nextDestination);
-
-    // Success
-    // if (nextDestination === message.reciverId) {
-    // }
 
     // Already looped around once
     if (nextDestination === message.senderId) {
-      replicache.mutate.failSend({
+      return replicache.mutate.failSend({
         messageId: params.messageId,
         reason: "NodeNotFound",
       });
     }
 
-    const result = await moveInFlight({
+    await moveInFlight({
       messageId: params.messageId,
       newPosition: nextDestination,
     }).run({ replicache, queue });
   },
 );
+
+const brightColors = [
+  "#FF1493", // bright pink
+  "#00FF00", // lime green
+  "#FF4500", // orange red
+  "#00FFFF", // cyan
+  "#FFD700", // gold
+  "#FF00FF", // magenta
+  "#32CD32", // lime
+  "#FF69B4", // hot pink
+  "#00FF7F", // spring green
+  "#FFA500", // orange
+];
+
+function getRandomBrightColor() {
+  return brightColors[Math.floor(Math.random() * brightColors.length)];
+}
 
 export const createMessageJob = createJobFn(
   Message.schemas.createMessage,
@@ -115,7 +153,7 @@ export const createMessageJob = createJobFn(
     await replicache.mutate.sendMessage(params);
     await replicache.mutate.createInFlight({
       position: params.senderId,
-      color: "#ff00ff",
+      color: getRandomBrightColor(),
       messageId: params.messageId,
     });
 

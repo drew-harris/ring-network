@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "@/hono";
+import { useContext } from "react";
+import { UserContext } from "@/stores/userStore";
 
 export const Route = createFileRoute("/admin/")({
   beforeLoad({ context }) {
@@ -37,7 +39,8 @@ export const Route = createFileRoute("/admin/")({
 });
 
 interface FormData {
-  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   type: "admin" | "operator";
@@ -49,7 +52,8 @@ function AdminPage() {
     ...form
   } = useForm({
     defaultValues: {
-      username: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: nanoid(5),
       type: "admin" as "admin" | "operator",
@@ -83,7 +87,14 @@ function AdminPage() {
           return oldData;
         }
 
-        const newData = [...oldData, variables.user];
+        const newUser = {
+          userId: User.createUsername(variables.firstName, variables.lastName),
+          name: `${variables.firstName} ${variables.lastName}`,
+          email: variables.email,
+          type: variables.type,
+        };
+
+        const newData = [...oldData, newUser];
         return newData;
       });
     },
@@ -94,12 +105,10 @@ function AdminPage() {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     addUserMutation.mutate({
-      user: {
-        userId: nanoid(8),
-        name: data.username,
-        email: data.email,
-        type: data.type,
-      },
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      type: data.type,
       password: nanoid(5),
     });
 
@@ -108,8 +117,16 @@ function AdminPage() {
 
   const users = useQuery({
     queryKey: ["users"],
-    queryFn: Api.getAllUsers,
+    queryFn: async () => {
+      const users = await Api.client.users.$get();
+      if (users.status === 401) {
+        throw new Error("Not logged in");
+      }
+      return users.json();
+    },
   });
+
+  const userCtx = useContext(UserContext);
 
   return (
     <div className="p-4 mx-auto max-w-4xl">
@@ -119,18 +136,33 @@ function AdminPage() {
       </Link>
       <h1 className="text-2xl font-bold mb-4">Create New User</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label htmlFor="username" className="block mb-1">
-            Username
-          </label>
-          <Input
-            id="username"
-            onChange={(e) => form.setValue("username", e.target.value)}
-            {...(form.register("username"), { required: true })}
-          />
-          {errors.username?.message && (
-            <div className="text-red-500">{errors.username?.message}</div>
-          )}
+        <div className="flex w-full grow gap-2">
+          <div className="grow">
+            <label htmlFor="username" className="block mb-1">
+              First Name
+            </label>
+            <Input
+              id="username"
+              onChange={(e) => form.setValue("firstName", e.target.value)}
+              {...(form.register("firstName"), { required: true })}
+            />
+            {errors.firstName?.message && (
+              <div className="text-red-500">{errors.firstName?.message}</div>
+            )}
+          </div>
+          <div className="grow">
+            <label htmlFor="username" className="block mb-1">
+              Last Name
+            </label>
+            <Input
+              id="username"
+              onChange={(e) => form.setValue("lastName", e.target.value)}
+              {...(form.register("lastName"), { required: true })}
+            />
+            {errors.lastName?.message && (
+              <div className="text-red-500">{errors.lastName?.message}</div>
+            )}
+          </div>
         </div>
         <div>
           <label htmlFor="email" className="block mb-1">
@@ -152,6 +184,7 @@ function AdminPage() {
         <div>
           <label>User Type</label>
           <Select
+            disabled={userCtx.user?.name !== "root"}
             value={form.getValues("type")}
             onValueChange={(e) =>
               form.setValue("type", e as "admin" | "operator")
@@ -174,8 +207,8 @@ function AdminPage() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Username</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>

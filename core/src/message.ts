@@ -91,6 +91,27 @@ export module Message {
     )
 
     .register(
+      "successSend",
+      z.object({ messageId: z.string() }),
+      async (tx, input) => {
+        const currentMessage = (await tx.get<Info>(
+          `messages/${input.messageId}`,
+        )) as Info | undefined;
+        if (!currentMessage) {
+          return;
+        }
+        await tx.del(`in_flight/${input.messageId}`);
+        return await tx.set(`messages/${input.messageId}`, {
+          ...currentMessage,
+          receivedAt: new Date().toISOString(),
+          path: [...currentMessage.path, currentMessage.reciverId],
+          placement: "node",
+          status: "Delivered",
+        } satisfies Info);
+      },
+    )
+
+    .register(
       "pushPath",
       z.object({
         messageId: z.string(),

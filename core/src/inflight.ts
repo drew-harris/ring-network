@@ -72,6 +72,11 @@ export module InFlight {
       return messages;
     },
 
+    getColor: async (tx: ReadTransaction, messageId: string) => {
+      const flight = await tx.get<Info>(`in_flight/${messageId}`);
+      return flight?.color;
+    },
+
     getAllFlightIds: async (tx: ReadTransaction) => {
       const messages = await tx
         .scan<Info>({

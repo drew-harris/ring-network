@@ -8,12 +8,13 @@ export module Node {
     nodeId: z.string(),
     leftNeighbor: z.string(),
     rightNeighbor: z.string(),
+    inboxSize: z.number(),
     status: z.enum(["active", "inactive"]),
   });
 
   export type Info = z.infer<typeof Info>;
 
-  export const createId = () => `N-${Math.floor(Math.random() * 100000000)}`;
+  export const createId = () => `N${Math.floor(Math.random() * 100000000)}`;
 
   const getNode = async (
     tx: WriteTransaction | ReadTransaction,
@@ -40,6 +41,7 @@ export module Node {
         nodeId: z.string(),
         label: z.string(),
         after: z.string(), // The node id it comes after
+        inboxSize: z.number().optional(),
       }),
       async (tx, input) => {
         console.log("creating node", input);
@@ -69,6 +71,7 @@ export module Node {
           nodeId,
           label: input.label,
           rightNeighbor: left.rightNeighbor,
+          inboxSize: input.inboxSize || 20,
           status: "active",
         } satisfies Info);
 
@@ -82,6 +85,24 @@ export module Node {
         await tx.set(`nodes/${right.nodeId}`, {
           ...right,
           leftNeighbor: nodeId,
+        });
+      },
+    )
+
+    .register(
+      "setInboxSize",
+      z.object({
+        nodeId: z.string(),
+        inboxSize: z.number(),
+      }),
+      async (tx, input) => {
+        const node = await tx.get<Info>(`nodes/${input.nodeId}`);
+        if (!node) {
+          return;
+        }
+        await tx.set(`nodes/${input}`, {
+          ...node,
+          inboxSize: input.inboxSize,
         });
       },
     )
@@ -144,80 +165,6 @@ export module Node {
         });
       }
     });
-  export const getInitialState = () => {
-    return [
-      {
-        leftNeighbor: "N-10",
-        nodeId: "N-1",
-        label: "N-1",
-        rightNeighbor: "N-2",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-1",
-        nodeId: "N-2",
-        label: "N-2",
-        rightNeighbor: "N-3",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-2",
-        nodeId: "N-3",
-        label: "N-3",
-        rightNeighbor: "N-4",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-3",
-        nodeId: "N-4",
-        label: "N-4",
-        rightNeighbor: "N-5",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-5",
-        nodeId: "N-6",
-        label: "N-6",
-        rightNeighbor: "N-7",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-4",
-        nodeId: "N-5",
-        label: "N-5",
-        rightNeighbor: "N-6",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-6",
-        nodeId: "N-7",
-        label: "N-7",
-        rightNeighbor: "N-8",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-7",
-        nodeId: "N-8",
-        label: "N-8",
-        rightNeighbor: "N-9",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-8",
-        nodeId: "N-9",
-        label: "N-9",
-        rightNeighbor: "N-10",
-        status: "active",
-      },
-      {
-        leftNeighbor: "N-9",
-        nodeId: "N-10",
-        label: "N-10",
-        rightNeighbor: "N-1",
-        status: "active",
-      },
-    ] satisfies Info[];
-  };
 
   export const transformNodeToOp = (node: Info) => {
     return {
@@ -237,7 +184,7 @@ export module Node {
         .toArray();
 
       // Order nodes by leftNeighbor
-      const first = nodes.find((node) => node.label === "N-1");
+      const first = nodes.find((node) => node.label === "N1");
 
       if (!first) {
         return [];
@@ -280,7 +227,7 @@ export module Node {
         .toArray();
 
       // Order nodes by leftNeighbor
-      const first = nodes.find((node) => node.label === "N-1");
+      const first = nodes.find((node) => node.label === "N1");
 
       if (!first) {
         return 0;
@@ -319,7 +266,7 @@ export module Node {
 
       let i = 1;
       while (true) {
-        const name = `N-${i}`;
+        const name = `N${i}`;
         if (!nodes.find((node) => node.label === name)) {
           return name;
         }

@@ -51,6 +51,34 @@ export const messageServerMutations: ServerMutations<
       .where(eq(InFlight_TB.messageId, input.messageId));
   },
 
+  successSend: async (tx, input, version) => {
+    const previousMessage = await tx
+      .select()
+      .from(Message_TB)
+      .where(eq(Message_TB.messageId, input.messageId))
+      .then((a) => a.at(0));
+    if (!previousMessage) {
+      return;
+    }
+    await tx
+      .update(Message_TB)
+      .set({
+        status: "Delivered",
+        placement: "node",
+        path: sql`array_append(${Message_TB.path}, ${previousMessage.reciverId})`,
+        version,
+      })
+      .where(eq(Message_TB.messageId, input.messageId));
+
+    await tx
+      .update(InFlight_TB)
+      .set({
+        deleted: true,
+        version: version,
+      })
+      .where(eq(InFlight_TB.messageId, input.messageId));
+  },
+
   pushPath: async (tx, input, version) => {
     await tx
       .update(Message_TB)
@@ -58,7 +86,7 @@ export const messageServerMutations: ServerMutations<
         path: sql`array_append(${Message_TB.path}, ${input})`,
         version,
       })
-      .where(eq(Message_TB.messageId, input));
+      .where(eq(Message_TB.messageId, input.messageId));
   },
 
   archiveMessages: async (tx, input, version) => {

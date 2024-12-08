@@ -4,30 +4,26 @@ import { AuthRouterType } from "realtime/email";
 
 const TS_PATH = import.meta.env.VITE_PUBLIC_BACKEND_URL!;
 
-export const client = hc<AuthRouterType>(TS_PATH + "/auth/");
+const client = hc<AuthRouterType>(TS_PATH + "/auth/");
 
 const API_PATH = import.meta.env.VITE_PUBLIC_JAVA_BACKEND_URL!;
 
 export const Api = {
-  getAllUsers: async () => {
-    const response = await fetch(API_PATH + "/users", {
-      headers: {
-        Accept: "application/json",
-      },
-    });
+  client: client,
 
+  getAllUsers: async (): Promise<User.Info[]> => {
+    const response = await client.users.$get();
     if (!response.ok) {
       throw new Error("Failed to get users");
     }
 
-    return (await response.json()) as User.Info[];
+    return await response.json();
   },
 
   deleteUser: async (userId: string) => {
-    const response = await fetch(API_PATH + `/users/${userId}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
+    const response = await client.user.$delete({
+      json: {
+        username: userId,
       },
     });
 
@@ -36,59 +32,35 @@ export const Api = {
     }
   },
 
-  createUser: async (params: { user: User.Info; password: string }) => {
-    const response = await fetch(API_PATH + "/users", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+  createUser: async (params: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    type: "admin" | "operator";
+  }) => {
+    const response = await client.user.$put({
+      json: {
+        email: params.email,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        type: params.type,
       },
-      body: JSON.stringify({
-        user: params.user,
-        password: params.password,
-      }),
     });
-
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error("Failed to create user");
     }
-
-    const _ = await client.email.$post({
-      json: {
-        email: params.user.email,
-      },
-    });
-
-    const sendCodeResponse = await fetch(TS_PATH + "/auth/email", {
-      body: JSON.stringify({
-        email: params.user.email,
-      }),
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!sendCodeResponse.ok) {
-      throw new Error("Failed to send code");
-    }
-
-    return (await response.json()) as User.Info;
+    const data = await response.json();
+    return data.user;
   },
 
   updatePassword: async (params: { userId: string; password: string }) => {
-    const response = await fetch(
-      API_PATH + `/users/${params.userId}/password`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: params.password,
+    const response = await client.reset.$post({
+      json: {
+        password: params.password,
+        username: params.userId,
       },
-    );
+    });
 
     if (!response.ok) {
       throw new Error("Failed to update password");
@@ -113,20 +85,5 @@ export const Api = {
     }
 
     return (await response.json()) as boolean;
-  },
-
-  getFullCode: async (code: string) => {
-    const response = await fetch(TS_PATH + `/users/code?code=${code}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to get code");
-    }
-
-    return (await response.json()) as User.Info;
   },
 };

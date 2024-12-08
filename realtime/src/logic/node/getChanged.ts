@@ -28,6 +28,7 @@ export const getChangedNodes = async (
         leftNeighbor: row.leftNeighbor,
         nodeId: row.nodeId,
         rightNeighbor: row.rightNeighbor,
+        inboxSize: row.inboxSize,
         status: row.status,
       } satisfies Node.Info,
     } satisfies PatchOperation;

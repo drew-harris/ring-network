@@ -8,6 +8,7 @@ export const Node_TB = pgTable("nodes", {
   status: text("status", {
     enum: ["active", "inactive"],
   }).notNull(),
+  inboxSize: integer("inboxSize").notNull().default(20),
   // Replicache values
   deleted: boolean("deleted").default(false),
   version: integer("version").notNull(),
@@ -66,6 +67,7 @@ export const Auth_TB = pgTable("auth", {
     .primaryKey()
     .references(() => User_TB.userId),
   password: text("password").notNull(),
+  hasReset: boolean("has_reset").notNull().default(false),
 });
 
 export const Server_TB = pgTable("realtime_server", {
@@ -78,10 +80,4 @@ export const Client_TB = pgTable("realtime_client", {
   clientGroup: text("client_group_id"),
   lastMutation: integer("last_mutation").notNull(),
   version: integer("version").notNull(),
-});
-
-export const ResetCode_TB = pgTable("reset_code", {
-  code: text("code").primaryKey(),
-  email: text("email").notNull(),
-  createdAt: date("created_at").notNull().defaultNow(),
 });

@@ -8,6 +8,8 @@ interface SelectedNode {
   setShowSidebar: (show: boolean) => void;
   hoverNode: string | null;
   setHoverNode: (node: string | null) => void;
+  defaultInboxSize: number;
+  setDefaultInboxSize: (size: number) => void;
 }
 
 export const useSelectedNode = create<SelectedNode>((set) => ({
@@ -21,4 +23,6 @@ export const useSelectedNode = create<SelectedNode>((set) => ({
   },
   clearSelectedNode: () => set({ selectedNode: null }),
   setShowSidebar: (show: boolean) => set({ showSidebar: show }),
+  defaultInboxSize: 20,
+  setDefaultInboxSize: (size: number) => set({ defaultInboxSize: size }),
 }));

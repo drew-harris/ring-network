@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Api } from "@/hono";
+import { UserContext } from "@/stores/userStore";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { User } from "core/user";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useContext, useState } from "react";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -15,18 +16,33 @@ function LoginPage() {
   const [passwordError, setPasswordError] = useState("");
 
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
 
-  const fakeFormSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+  const formSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (!username) {
       setUsernameError("Username is required");
       return;
     }
 
-    const loginResult = await User.Api.login(username, password);
-    if (!loginResult) {
+    const loginResult = await Api.client.login.$post({
+      json: {
+        password,
+        username,
+      },
+    });
+
+    if (loginResult.status === 401) {
       setPasswordError("Invalid username or password");
       return;
+    } else if (loginResult.status === 200) {
+      const data = await loginResult.json();
+      userContext.setUser(data.user);
+      if (!data.auth.hasReset) {
+        return navigate({
+          to: "/userinfo",
+        });
+      }
     }
 
     navigate({
@@ -41,7 +57,7 @@ function LoginPage() {
         <div className="opacity-80 text-sm">
           Log in with your username and password.
         </div>
-        <form onSubmit={fakeFormSubmit} className="flex flex-col py-2 gap-2">
+        <form onSubmit={formSubmit} className="flex flex-col py-2 gap-2">
           <Input
             type="text"
             placeholder="Username"
