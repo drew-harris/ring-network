@@ -4,7 +4,6 @@ import { validator } from "hono/validator";
 import { createTransport } from "nodemailer";
 import { eq } from "drizzle-orm";
 import { createTransaction } from "./db";
-import { customAlphabet } from "nanoid";
 import { Auth_TB, User_TB } from "./schema";
 import { User } from "core/user";
 

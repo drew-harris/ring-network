@@ -4,7 +4,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "dev": "source .env && mvn spring-boot:run"
+    "dev": "echo done"
   },
   "devDependencies": {
     "@types/bun": "latest"

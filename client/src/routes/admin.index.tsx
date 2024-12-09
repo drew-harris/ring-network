@@ -1,6 +1,5 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import {
   Table,
   TableBody,
