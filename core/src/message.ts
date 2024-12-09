@@ -216,6 +216,6 @@ export module Message {
   export const generateMessageId = () => {
     // Random number from 1-100
     const randomNumber = Math.floor(Math.random() * 100) + 1;
-    return `M-${randomNumber}`;
+    return `M${randomNumber}`;
   };
 }
