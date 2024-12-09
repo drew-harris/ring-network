@@ -23,6 +23,6 @@ export const useSelectedNode = create<SelectedNode>((set) => ({
   },
   clearSelectedNode: () => set({ selectedNode: null }),
   setShowSidebar: (show: boolean) => set({ showSidebar: show }),
-  defaultInboxSize: 20,
+  defaultInboxSize: 5,
   setDefaultInboxSize: (size: number) => set({ defaultInboxSize: size }),
 }));

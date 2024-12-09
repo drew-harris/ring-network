@@ -4,7 +4,7 @@ import { Api } from "@/hono";
 import { restrictPage } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/userinfo/")({
   beforeLoad: restrictPage,
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/userinfo/")({
 function UserInfoPage() {
   const info = Route.useLoaderData();
   const [newPassword, setNewPassword] = useState("");
-  const [newPasswordError, setNewPasswordError] = useState("");
+  const [newPasswordError] = useState("");
 
   const updatePasswordMutation = useMutation({
     mutationFn: Api.updatePassword,

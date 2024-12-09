@@ -1,4 +1,4 @@
-import { ReadTransaction, Replicache } from "replicache";
+import { Replicache } from "replicache";
 import { Mutations, query } from "./utils";
 import { z } from "./zod";
 
@@ -40,6 +40,22 @@ export module Message {
       return message as Info | undefined;
     });
     return message;
+  };
+
+  export const getForNode = async (tx: Replicache, nodeId: string) => {
+    const messages = await tx.query(async (tx) => {
+      const messages = await tx
+        .scan<Message.Info>({
+          prefix: `messages/`,
+        })
+        .values()
+        .toArray();
+      return messages.filter(
+        (message) =>
+          message.reciverId === nodeId && message.status === "Delivered",
+      );
+    });
+    return messages;
   };
 
   export const schemas = {
@@ -175,7 +191,10 @@ export module Message {
         })
         .values()
         .toArray();
-      return messages.filter((message) => message.reciverId === input);
+      return messages.filter(
+        (message) =>
+          message.reciverId === input && message.status === "Delivered",
+      );
     }),
 
     getAllMessages: query(placementSchema, async (tx, input) => {
@@ -185,7 +204,12 @@ export module Message {
         })
         .values()
         .toArray();
-      return messages.filter((message) => message.placement === input);
+      return messages
+        .filter(
+          (message) =>
+            message.placement === input && message.placement == input,
+        )
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }),
   };
 

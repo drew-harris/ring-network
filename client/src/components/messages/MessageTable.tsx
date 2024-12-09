@@ -75,11 +75,8 @@ export const MessageTable = ({
     columnHelper.accessor("direction", {
       header: "Direction",
     }),
-    columnHelper.accessor("createdAt", {
-      header: "Sent At",
-      cell(props) {
-        return new Date(props.getValue()).toLocaleString();
-      },
+    columnHelper.accessor("status", {
+      header: "Status",
     }),
     columnHelper.accessor("path", {
       header: "Path",
@@ -87,7 +84,7 @@ export const MessageTable = ({
         return props
           .getValue()
           .map((id) => getNodeLabelById(id))
-          .join(" -> ");
+          .join(" →");
       },
     }),
   ];

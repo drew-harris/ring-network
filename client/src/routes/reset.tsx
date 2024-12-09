@@ -27,7 +27,7 @@ function ResetPage() {
       await rep.close();
       await dropAllDatabases();
       if (scope === "all") {
-        const response = await fetch(TS_PATH + "/reset", {
+        await fetch(TS_PATH + "/reset", {
           method: "get",
         });
       }

@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, integer, date } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, integer } from "drizzle-orm/pg-core";
 
 export const Node_TB = pgTable("nodes", {
   nodeId: text("nodeId").primaryKey(),

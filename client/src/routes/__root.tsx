@@ -10,11 +10,9 @@ type RouterContext = {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
-    <>
-      <TooltipProvider>
-        <Outlet />
-        {/* <TanStackRouterDevtools /> */}
-      </TooltipProvider>
-    </>
+    <TooltipProvider>
+      <Outlet />
+      {/* <TanStackRouterDevtools /> */}
+    </TooltipProvider>
   ),
 });

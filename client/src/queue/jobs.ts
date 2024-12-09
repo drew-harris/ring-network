@@ -37,7 +37,7 @@ const successfulDelivery = createJobFn(
   z.object({
     messageId: z.string(),
   }),
-  async ({ params, replicache, queue }) => {
+  async ({ params, replicache }) => {
     const message = await Message.getById(replicache, params.messageId);
     if (!message) {
       return;
@@ -81,6 +81,21 @@ export const handleMessagePosUpdate = createJobFn(
 
     // Check if im there
     if (sittingOnNode?.nodeId === message.reciverId) {
+      // Get message count for node
+      const messages = await Message.getForNode(
+        replicache,
+        sittingOnNode.nodeId,
+      );
+
+      console.log("message length", messages.length);
+
+      if (messages.length >= sittingOnNode.inboxSize) {
+        return replicache.mutate.failSend({
+          messageId: params.messageId,
+          reason: "InboxFull",
+        });
+      }
+
       return await successfulDelivery({
         messageId: params.messageId,
       }).run({ replicache, queue });

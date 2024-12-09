@@ -131,6 +131,8 @@ const authRouter = new Hono()
 
       const frontendUrl = process.env.FRONTEND_URL!;
 
+      console.log("sending email");
+
       await transporter.sendMail({
         from: "dsharris10@gmail.com",
         to: data.email,

@@ -45,7 +45,6 @@ export const SidebarSendForm = ({ nodeId }: SidebarSendFormProps) => {
     if (message.length !== 0) {
       if (targetNodeId !== null) {
         console.log("SENDING MESSAGE");
-
         queue.add(
           createMessageJob({
             label: Message.generateMessageId(),

@@ -1,6 +1,6 @@
 import { useContainerDimensions } from "@/lib/containerSize";
 import { Node } from "core/node";
-import { RefObject, useContext, useMemo, useRef, useState } from "react";
+import { RefObject, useContext, useMemo, useRef } from "react";
 import { Flight, NodeItem } from "./NodeItem";
 import { NodeLines } from "@/components/node-viewing/NodeLines";
 import { RealtimeClientContext } from "@/main";
@@ -8,6 +8,7 @@ import { useSubscribe } from "replicache-react";
 import { InFlight } from "core/inflight";
 import { UserContext } from "@/stores/userStore";
 import { Input } from "../ui/input";
+import { useSelectedNode } from "@/stores/selectedNode";
 
 interface NodeViewProps {
   nodes: Node.Info[];
@@ -35,53 +36,54 @@ export const NodeView = (props: NodeViewProps) => {
   });
 
   return (
-    <>
-      <div className="min-h-full relative h-full" ref={componentRef}>
-        {isInitialized ? (
-          <>
-            <NodeLines
+    <div className="min-h-full relative h-full" ref={componentRef}>
+      {isInitialized ? (
+        <>
+          <NodeLines
+            nodes={props.nodes}
+            width={width}
+            height={height}
+            radius={radius}
+          />
+          {flightIds.map((fid) => (
+            <Flight
+              flight={fid}
+              key={fid.messageId}
+              defaultPosition={fid.position}
               nodes={props.nodes}
               width={width}
               height={height}
               radius={radius}
+              totalNodes={props.nodes.length}
             />
-            {flightIds.map((fid) => (
-              <Flight
-                flight={fid}
-                key={fid.messageId}
-                defaultPosition={fid.position}
-                nodes={props.nodes}
-                width={width}
-                height={height}
-                radius={radius}
-                totalNodes={props.nodes.length}
-              />
-            ))}
-            {props.nodes.map(
-              (node, index) =>
-                node.nodeId && (
-                  <NodeItem
-                    key={node.nodeId}
-                    node={node}
-                    index={index}
-                    width={width}
-                    height={height}
-                    radius={radius}
-                    totalNodes={props.nodes.length}
-                  />
-                ),
-            )}
+          ))}
+          {props.nodes.map(
+            (node, index) =>
+              node.nodeId && (
+                <NodeItem
+                  key={node.nodeId}
+                  node={node}
+                  index={index}
+                  width={width}
+                  height={height}
+                  radius={radius}
+                  totalNodes={props.nodes.length}
+                />
+              ),
+          )}
 
-            <InboxSizeManager />
-          </>
-        ) : null}
-      </div>
-    </>
+          <InboxSizeManager />
+        </>
+      ) : null}
+    </div>
   );
 };
 
 const InboxSizeManager = () => {
-  const [inboxSize, setInboxSize] = useState(20);
+  const [inboxSize, setInboxSize] = useSelectedNode((s) => [
+    s.defaultInboxSize,
+    s.setDefaultInboxSize,
+  ]);
 
   const userCtx = useContext(UserContext);
   if (userCtx.user?.type !== "admin") {

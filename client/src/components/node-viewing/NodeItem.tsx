@@ -33,33 +33,31 @@ export const NodeItem = ({
   const hoveredNode = useSelectedNode((state) => state.hoverNode);
 
   return (
-    <>
-      <motion.div
-        transition={{ duration: 0.1 }}
-        layoutId={node.nodeId}
-        layout
+    <motion.div
+      transition={{ duration: 0.1 }}
+      layoutId={node.nodeId}
+      layout
+      className={cn(
+        "absolute cursor-pointer",
+        node.status == "inactive" && "opacity-50",
+      )}
+      initial={{ x, y }}
+      animate={{ x, y, scale: hoveredNode == node.nodeId ? 1.4 : 1 }}
+    >
+      <div
+        onClick={() => {
+          setSelectedNode(node.nodeId);
+        }}
         className={cn(
-          "absolute cursor-pointer",
+          "p-3 text-black dark:text-white text-xl light:shadow bg-neutral-200 dark:bg-neutral-700 rounded-md border border-neutral-400 dark:border-neutral-600 min-w-12 text-center",
+          selectedNode == node.nodeId &&
+            "outline outline-2 outline-neutral-400 dark:outline-neutral-200",
           node.status == "inactive" && "opacity-50",
         )}
-        initial={{ x, y }}
-        animate={{ x, y, scale: hoveredNode == node.nodeId ? 1.4 : 1 }}
       >
-        <div
-          onClick={() => {
-            setSelectedNode(node.nodeId);
-          }}
-          className={cn(
-            "p-3 text-black dark:text-white text-xl light:shadow bg-neutral-200 dark:bg-neutral-700 rounded-md border border-neutral-400 dark:border-neutral-600 min-w-12 text-center",
-            selectedNode == node.nodeId &&
-              "outline outline-2 outline-neutral-400 dark:outline-neutral-200",
-            node.status == "inactive" && "opacity-50",
-          )}
-        >
-          <div>{node.label}</div>
-        </div>
-      </motion.div>
-    </>
+        <div>{node.label}</div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -93,11 +91,6 @@ export const Flight = ({
       default: defaultPosition,
     },
   );
-
-  const color = useSubscribe(r, async (tx) => {
-    const color = await InFlight.queries.getColor(tx, flight.messageId);
-    return color;
-  });
 
   const position = useMemo(() => {
     const nodeIndex = nodes.findIndex((n) => n.nodeId === nodePosition);
