@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import { Transaction } from "./db";
 import {
   Auth_TB,

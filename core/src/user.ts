@@ -20,7 +20,7 @@ export module User {
 concatenated with the lastname. For example, if the firstname is ‘John’ and the lastname is
 ‘Murray’, then the username will be ‘jmurray’.*/
   export const createUsername = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName}`;
+    return `${firstName.charAt(0)}${lastName}`.toLowerCase();
   };
 
   export const generatePassword = (): string => {
