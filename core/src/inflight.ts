@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Mutations } from "./utils";
+import Mutations from "./utils";
 import { ReadTransaction, Replicache } from "replicache";
 
 export module InFlight {
@@ -40,9 +40,9 @@ export module InFlight {
       "moveInFlight",
       z.object({ messageId: z.string(), position: z.string() }),
       async (tx, input) => {
-        const previousPosition = await tx.get<Info>(
+        const previousPosition = (await tx.get(
           `in_flight/${input.messageId}`,
-        );
+        )) as Info | null;
         if (!previousPosition) {
           throw new Error(`Flight with id ${input.messageId} does not exist`);
         }

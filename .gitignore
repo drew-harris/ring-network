@@ -32,3 +32,4 @@ lerna-debug.log*
 user-server/src/main/resources/application.properties
 
 pull-db.sh
+.aider*
