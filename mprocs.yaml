@@ -1,0 +1,9 @@
+procs:
+  compose:
+    cmd: ['docker', 'compose', 'up', '--build']
+  down:
+    cmd: ['docker', 'compose', 'down']
+    autostart: false
+  dev:
+    cmd: ['pnpm', 'run', 'dev']
+  

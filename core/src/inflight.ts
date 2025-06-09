@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Mutations from "./utils";
+import { Mutations } from "./utils";
 import { ReadTransaction, Replicache } from "replicache";
 
 export module InFlight {
